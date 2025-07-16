@@ -36,7 +36,7 @@ python -m venv .venv
 
 * Activate the environment:
 ```bash
-venv\Scripts\activate
+.venv\Scripts\activate
 ```
 Once activated, you will see **(venv)** appear at the beginning of your terminal prompt.
 
