@@ -10,8 +10,8 @@ The script must run in parallel with an active LSL stream to capture the real-ti
 Before you can run the script, you must install the necessary files and dependencies on your system.
 - [BciPy](https://github.com/CAMBI-tech/BciPy): Python library that supports experimental data collection.
   
-- [Python](https://www.python.org/downloads/release/python-390/): Python 3.9 is strictly required. This is necessary for compatibility with the ```bcipy``` dependancy.
-> This script has been set up using Python 3.9.13
+- [Python](https://www.python.org/downloads/release/python-3913/): Python 3.9.13 is strictly required. This is necessary for compatibility with the ```bcipy``` dependancy.
+> Other version of Python 3.9 have not been tested.
 
 
 ## Setup Instructions
