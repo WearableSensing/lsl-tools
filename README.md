@@ -72,7 +72,8 @@ Ensure your Wearable Sensing device is properly connected to your computer.
 * Launch the ```dsi2lslGUI``` application to begin streaming EEG data using LabStreamingLayer:
 
 ### 2. Run the Recording Script
-> [!NOTE] Make sure your virtual environment is still active
+> [!NOTE]
+> Make sure your virtual environment is still active
 
 * Navigate into the scripts directory:
 ```powershell
