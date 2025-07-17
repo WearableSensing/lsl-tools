@@ -1,19 +1,16 @@
 # lsl-tools
 This repository contains scripts to support the processing of Wearable Sensing data using LabStreamingLayer (LSL).
 
-# EEG Data Recorder for Wearable Sensing (dsi2lsl)
-This project provides a Python script for recording a specified duration of data from the dsi2lsl stream and saving it directly to a .csv file.
+# EEG Data Recorder for Wearable Sensing (dsi2lsl) using ```pylsl```
+This project provides a Python script for recording a specified duration of data from the ```dsi2lsl``` stream and saving it directly to a ```.csv``` file.
 
-The script must run in parallel with an active LSL stream to capture the real-time EEG data for analysis and processing.
+This is the preferred method for data recording, as it does not require a strict, outdated version of Python. It uses the pylsl and pandas libraries directly, simplifying the setup process significantly.
 
 ### Requirements
 Before you can run the script, you must install the necessary files and dependencies on your system.
-- [BciPy](https://github.com/CAMBI-tech/BciPy): Python library that supports experimental data collection.
+- [Python](https://www.python.org/downloads/): Any modern version of Python (3.8+).
+- The ```pylsl``` and ```pandas``` Python libraries. This guide will walk you through installing these using the ```requirements.txt``` file.
   
-- [Python](https://www.python.org/downloads/release/python-3913/): Python 3.9.13 is strictly required. This is necessary for compatibility with the ```bcipy``` dependancy.
-> Other version of Python 3.9 have not been tested.
-
-
 ## Setup Instructions
 
 Follow these steps to prepare your environment for running the recording script.
@@ -25,14 +22,13 @@ In Visual Studio Code, create a new folder where you will put this repository.
 git clone https://github.com/WearableSensing/lsl-tools.git
 ```
 
-
 ### 2. Create  and Activate a Virtual Environment 
 * Create the environment:
 ```powershell
 python -m venv .venv
 ```
 > [!NOTE]
-> When creating the virtual environment ensure Python 3.9 is selected.
+> Ensure your in the ```lsl-tools``` directory
 
 * Activate the environment:
 ```bash
@@ -48,21 +44,7 @@ Once your virtual environment has been activated, we need to install all of the 
 pip install -r requirements.txt
 ```
 > [!NOTE]
-> Ensure your in the lsl-tools directory.
-### 4. Install BciPy and Dependencies
-This script relies on BciPy, which must be installed from its source repository.
-* Clone the BciPy repository inside of your current folder:
-```powershell
-git clone https://github.com/CAMBI-tech/BciPy.git
-```
-* Navigate into the BciPy directory:
-```powershell
-cd BciPy
-```
-* Install the BciPy package:
-```powershell
-pip install .
-```
+> Ensure your in the ```lsl-tools``` directory.
 
 ## Basic Usage 
 To run the script and record data, follow these steps:
@@ -74,13 +56,9 @@ Ensure your Wearable Sensing device is properly connected to your computer.
 ### 2. Run the Recording Script
 > [!NOTE]
 > Make sure your virtual environment is still active
-* Get out of the BciPy directory
+* Navigate into the pylsl-scripts directory:
 ```powershell
-cd ..
-```
-* Navigate into the bcipy-scripts directory:
-```powershell
-cd bcipy-scripts
+cd pylsl-scripts
 ```
 
 * From the bcipy-scripts directory, paste this command into your terminal while your LSL stream is running:
