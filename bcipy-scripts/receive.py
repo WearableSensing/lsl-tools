@@ -9,7 +9,7 @@ BASE_PATH = '.'
 def main():
     '''
     Script to record data from Wearable Sensing LSL stream (dsi2lsl).
-    Records for specified duration and saves .csv to specified path.
+    Records for specified duration and saves CSV to desired path.
     '''
 
     # Generates unique filename

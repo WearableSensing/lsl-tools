@@ -4,5 +4,4 @@ mne==1.6.1
 numpy==1.24.4
 pylsl==1.16.2
 pandas==2.0.3
-numpy>=1.21,<3.0
 pyqtgraph==0.13.3

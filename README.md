@@ -74,13 +74,16 @@ Ensure your Wearable Sensing device is properly connected to your computer.
 ### 2. Run the Recording Script
 > [!NOTE]
 > Make sure your virtual environment is still active
-
-* Navigate into the scripts directory:
+* Get out of the BciPy directory
 ```powershell
-cd scripts
+cd ..
+```
+* Navigate into the bcipy-scripts directory:
+```powershell
+cd bcipy-scripts
 ```
 
-* From the scripts directory, paste this command into your terminal while your LSL stream is running:
+* From the bcipy-scripts directory, paste this command into your terminal while your LSL stream is running:
 ```powershell
 python receive.py
 ```
