@@ -1,8 +1,5 @@
-# lsl-tools
-This repository contains scripts to support the processing of Wearable Sensing data using LabStreamingLayer (LSL).
-
-# EEG Data Recorder for Wearable Sensing (dsi2lsl)
-This project provides a Python script for recording a specified duration of data from the dsi2lsl stream and saving it directly to a .csv file.
+# EEG Data Recorder for Wearable Sensing (dsi2lsl) using ```BciPy```
+This project provides a Python script for recording a specified duration of data from the ```dsi2lsl``` stream and saving it directly to a ```.csv``` file.
 
 The script must run in parallel with an active LSL stream to capture the real-time EEG data for analysis and processing.
 
@@ -10,8 +7,8 @@ The script must run in parallel with an active LSL stream to capture the real-ti
 Before you can run the script, you must install the necessary files and dependencies on your system.
 - [BciPy](https://github.com/CAMBI-tech/BciPy): Python library that supports experimental data collection.
   
-- [Python](https://www.python.org/downloads/release/python-3913/): Python 3.9.13 is strictly required. This is necessary for compatibility with the ```bcipy``` dependancy.
-> Other version of Python 3.9 have not been tested.
+- [Python](https://www.python.org/downloads/release/python-3913/): Python 3.9.13 is strictly required for this guide. This is necessary for compatibility with the ```bcipy``` dependancy.
+> Other versions of Python 3.9 have not been tested.
 
 
 ## Setup Instructions
