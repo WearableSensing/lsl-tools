@@ -2,7 +2,7 @@
 This repository contains scripts to support the processing of Wearable Sensing data using LabStreamingLayer (LSL).
 
 # EEG Data Recorder for Wearable Sensing (dsi2lsl) using ```pylsl```
-This project provides a Python script for recording a specified duration of data from the ```dsi2lsl``` stream and saving it directly to a ```.csv``` file.
+This project provides a Python script for recording any specified duration of data from the ```dsi2lsl``` stream and saving it directly to a ```.csv``` file.
 
 This is the preferred method for data recording, as it does not require a strict, outdated version of Python. It uses the pylsl and pandas libraries directly, simplifying the setup process significantly.
 
