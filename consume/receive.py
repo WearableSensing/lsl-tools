@@ -10,7 +10,16 @@ DEFAULT_DURATION = 10
 DEFAULT_STREAM_NAME = 'WS-default'
 DEFAULT_OUTPUT_PATH = '.' 
 
+
 def find_stream(stream_name: str) -> pylsl.StreamInlet:
+    """
+    Finds the LSL stream by name and returns a StreamInlet for data collection.
+    Args:
+        stream_name (str): The name of the stream to find.
+    Returns:
+        dsi_stream_inlet (pylsl.StreamInlet): The inlet for the found stream.
+    """
+
     print('Looking for EEG streams')
     streams = pylsl.resolve_byprop(prop='name', value=stream_name, timeout=10)
     # If timeout, end stream to prevent terminal from being frozen.
@@ -38,9 +47,14 @@ def recieve_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
     '''
     Python script to record data from Wearable Sensing LSL stream (dsi2lsl).
     Records for specified duration and saves CSV to desired path.
+    Args:
+        stream (pylsl.StreamInlet): The LSL stream inlet to read data from.
+        output_path (str): The path where the CSV file will be saved.   
+        duration (float): The duration in seconds for which to collect data.
+    Returns:    
+        None
     '''
     try:
-        
         # Generate unique filename for new CSV file.
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
         unique_filename = f"DSIdata-{duration}s-{timestamp}.csv"
@@ -99,6 +113,11 @@ def recieve_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
         print(f'Error: {e}')
 
 if __name__ == "__main__":
+    """
+    Main entry point for the script to collect data from a DSI stream.
+    Parses command line arguments for output path, stream name, and duration.
+    If no arguments are provided, uses default values.
+    """
     import argparse
     parser = argparse.ArgumentParser(
         description="A script that collects data from a DSI stream and writes it a file."
@@ -109,7 +128,6 @@ if __name__ == "__main__":
         help="The path where data should be written to.",
         default=DEFAULT_OUTPUT_PATH
     )
-
     parser.add_argument(
         "--stream",
         type=str,

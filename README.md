@@ -62,3 +62,4 @@ Run the following in your terminal while your LSL stream is running:
 python consume/receive.py
 ```
 If the script was ran successfully, you should see a .csv file saved to your specified path.
+
