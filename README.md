@@ -63,3 +63,17 @@ python consume/receive.py
 ```
 If the script was ran successfully, you should see a .csv file saved to your specified path.
 
+## Testing
+To run the test for the receive script. 
+
+### 1. Navigate
+Naviagte the the root of the project folder, 'lsl-tools'.
+
+### 2. Run
+> [!NOTE]
+> Make sure your virtual environment is still active
+
+Run the following in your terminal:
+```sh
+python -m unittest discover
+```
