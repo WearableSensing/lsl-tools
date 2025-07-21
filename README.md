@@ -18,13 +18,13 @@ Follow these steps to prepare your environment for running the recording script.
 ### 1. Clone the Project Repository 
 In Visual Studio Code, create a new folder where you will put this repository. 
 * Paste this command into the terminal.
-```powershell
+```sh
 git clone https://github.com/WearableSensing/lsl-tools.git
 ```
 
 ### 2. Create  and Activate a Virtual Environment 
 * Create the environment:
-```powershell
+```sh
 python -m venv .venv
 ```
 > [!NOTE]
@@ -40,7 +40,7 @@ Once activated, you will see **(venv)** appear at the beginning of your terminal
 Once your virtual environment has been activated, we need to install all of the dependencies inside of requirements.txt in order to make the script run.
 * Paste this command into the terminal.
   
-```powershell
+```sh
 pip install -r requirements.txt
 ```
 > [!NOTE]
@@ -56,13 +56,9 @@ Ensure your Wearable Sensing device is properly connected to your computer.
 ### 2. Run the Recording Script
 > [!NOTE]
 > Make sure your virtual environment is still active
-* Navigate into the pylsl-scripts directory:
-```powershell
-cd pylsl-scripts
-```
 
-* From the bcipy-scripts directory, paste this command into your terminal while your LSL stream is running:
-```powershell
-python receive.py
+Run the following in your terminal while your LSL stream is running:
+```sh
+python consume/receive.py
 ```
 If the script was ran successfully, you should see a .csv file saved to your specified path.
