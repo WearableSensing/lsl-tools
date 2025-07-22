@@ -9,7 +9,8 @@ This is the preferred method for data recording, as it does not require a strict
 ### Requirements
 Before you can run the script, you must install the necessary files and dependencies on your system.
 - [Python](https://www.python.org/downloads/): Any modern version of Python (3.8+).
-- The ```pylsl``` and ```pandas``` Python libraries. This guide will walk you through installing these using the ```requirements.txt``` file.
+- [dsi2lsl program](https://github.com/labstreaminglayer/App-WearableSensing/releases)
+- The ```pylsl``` and ```pandas``` Python libraries. This guide will walk you through installing these using the ```requirements.txt``` file. 
   
 ## Setup Instructions
 
