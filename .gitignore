@@ -211,6 +211,5 @@ __marimo__/
 
 # Files
 *.csv
-BciPy/
 
 .vscode/
