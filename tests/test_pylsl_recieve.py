@@ -23,14 +23,14 @@ class TestFindStream(unittest.TestCase):
         self.mock_pylsl = self.pylsl_patcher.start()
 
         # --- Pre-define all the mock objects as instance attributes ---
-        self.mock_stream_info = MagicMock()
-        self.mock_stream_info.name.return_value = 'TestStream'
+        self.mock_stream = MagicMock()
+        self.mock_stream.name.return_value = 'TestStream'
 
-        self.mock_inlet_instance = MagicMock()
+        self.mock_inlet_inst = MagicMock()
 
         # --- Pre-configure the main mock's default behavior for a success case ---
-        self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream_info]
-        self.mock_pylsl.StreamInlet.return_value = self.mock_inlet_instance
+        self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream]
+        self.mock_pylsl.StreamInlet.return_value = self.mock_inlet_inst
 
     def tearDown(self):
         '''
@@ -95,10 +95,12 @@ class TestReceiveData(unittest.TestCase):
         self.mock_datetime = self.datetime_patcher.start()
         self.mock_open = self.open_patcher.start()
         
-        self.mock_time.time.side_effect = [0, 10]  # Default for one loop iteration
-        self.mock_datetime.now.return_value = datetime(2025, 2, 25, 12, 0, 0)
+        # --- Configure default mock behaviors ---
+        self.mock_time.time.side_effect = [0, 4, 6]  # Will return 0 on first call, 4 on second, 6 on third
+        # Makes sure time based loop will run for two times and then stops, prevents infinite loop
+        self.mock_datetime.now.return_value = datetime(2025, 7, 22, 12, 0, 0)
         self.mock_df_instance = MagicMock()
-        self.mock_dataframe_class.return_value = self.mock_df_instance
+        self.mock_dataframe.return_value = self.mock_df_instance
 
         self.mock_stream_inlet = MagicMock()        
         mock_stream_info = MagicMock()
@@ -136,11 +138,41 @@ class TestReceiveData(unittest.TestCase):
         self.datetime_patcher.stop()
         self.open_patcher.stop()
         self.pd_patcher.stop()
+    
+    def test_data_collect_success(self):
+        '''
+        Test successful data collection and CSV writing.
+        '''
+        # Define the output path using a temporary directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_path = temp_dir
+            test_dur = 5
+            
+            # Acting
+            recieve_data(self.mock_stream_inlet, output_path, test_dur)
 
-    # Add actual test methods for recieve_data if needed
-    # def test_recieve_data_basic(self):
-    #     ...existing code...
+            # Check that the DataFrame was created with correct columns
+            self.mock_dataframe.assert_called_once()
+            self.mock_df_instance.to_csv.assert_called_once()
 
+            # Check that the file was opened correctly and correct filename
+            expected_filename = f"DSIdata-{test_dur}s-20250722-120000.csv"
+            expected_full_path = os.path.join(output_path, expected_filename)
+            self.mock_open.assert_called_once_with(expected_full_path, 'w', newline='')
+                 # 'w' mode for writing, newline='' to avoid extra newlines in csv
 
+            # Check that the metadata was written to the file
+            handle = self.mock_open()
+            handle.write.assert_any_call('stream_name,TestStream\n')
+            handle.write.assert_any_call('daq_type,EEG\n')
+            handle.write.assert_any_call('units,microvolts\n')
+            handle.write.assert_any_call('reference,Ref1\n')
+            handle.write.assert_any_call('sample_rate,300\n')
+
+            # Check that the DataFrame was saved
+            expected_col = ['Timestamp', 'CH1', 'CH1', 'lsl_timestamp']
+            expected_data = [[1, 1.0, 2.0, 12345.1], [2, 1.1, 2.1, 12345.2]]
+            self.mock_dataframe.assert_called_once_with(expected_data, columns=expected_col)
+            self.mock_df_instance.to_csv.assert_called_once_with(handle, index=False)    
 if __name__ == '__main__':
     unittest.main()
