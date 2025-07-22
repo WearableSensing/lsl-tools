@@ -6,8 +6,6 @@ This project provides a Python script for recording any specified duration of da
 
 This is the preferred method for data recording, as it does not require a strict, outdated version of Python. It uses the pylsl and pandas libraries directly, simplifying the setup process significantly.
 
-The dsi2lsl program can be found [here]( https://github.com/labstreaminglayer/App-WearableSensing/releases)
-
 ### Requirements
 Before you can run the script, you must install the necessary files and dependencies on your system.
 - [Python](https://www.python.org/downloads/): Any modern version of Python (3.8+).
