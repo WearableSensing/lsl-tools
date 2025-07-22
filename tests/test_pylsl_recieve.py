@@ -1,13 +1,10 @@
-import sys
 import os
 import unittest
-import pylsl
 from unittest.mock import patch, MagicMock, mock_open
 from datetime import datetime
 import tempfile
-import pandas as pd
 
-from tools.consume.receive import find_stream, recieve_data
+from tools.consume.receive import find_stream, receive_data
 
 class TestFindStream(unittest.TestCase):
     '''
@@ -15,51 +12,50 @@ class TestFindStream(unittest.TestCase):
     '''
     def setUp(self):
         '''
-        This method is run before each test. It sets up a shared mock
+        This method runs before each test. It sets up a shared mock
         environment for the tests in this class.
         '''
-        # Start the patcher for 'pylsl' and store the mock object on self
+        # Start the patcher for 'pylsl' and store the mock object on self.
         self.pylsl_patcher = patch('tools.consume.receive.pylsl')
         self.mock_pylsl = self.pylsl_patcher.start()
 
-        # --- Pre-define all the mock objects as instance attributes ---
+        # Pre-define all the mock objects as instance attributes.
         self.mock_stream = MagicMock()
         self.mock_stream.name.return_value = 'TestStream'
 
         self.mock_inlet_inst = MagicMock()
 
-        # --- Pre-configure the main mock's default behavior for a success case ---
+        # Pre-configure the main mock's default behavior for a success case.
         self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream]
         self.mock_pylsl.StreamInlet.return_value = self.mock_inlet_inst
 
     def tearDown(self):
         '''
-        This method is run after each test to clean up. It stops the patcher.
+        Method that stops the patcher after each test.
         '''
         self.pylsl_patcher.stop()
 
     def test_find_stream_success(self):
         '''
-        Test successfully finding a stream by name
+        Test finding a stream by name when it exists.
         '''
         stream_name = 'TestStream'
-        result_inlet = find_stream(stream_name) # This calls the actual function find_stream
+        result_inlet = find_stream(stream_name) # Calls find_stream method from consume.receive module.
 
-        # Checks that methods were call corectly
+        # Checks that methods were called corectly
         self.mock_pylsl.resolve_byprop.assert_called_once_with(prop='name', value=stream_name, timeout=10)
-        self.mock_pylsl.StreamInlet.assert_called_once_with(self.mock_stream_info)
+        self.mock_pylsl.StreamInlet.assert_called_once_with(self.mock_stream)
         
-        # Final check that function returns the correct inlet
-        self.assertEqual(result_inlet, self.mock_inlet_instance)
+        self.assertEqual(result_inlet, self.mock_inlet_inst)
         
     def test_find_stream_no_streams(self):
         '''
-        Test finding a stream when no streams are found
+        Test that raises an exception when no streams are found.
         '''
         self.mock_pylsl.resolve_byprop.return_value = []
         stream_name = 'NoStream'
         with self.assertRaises(Exception) as context:
-            find_stream(stream_name) # This calls the actual function find_stream
+            find_stream(stream_name) # Calls find_stream method from consume.receive module.
         
         # Final check that function returns the correct inlet
         self.assertTrue('Could not find stream name' in str(context.exception))
@@ -68,7 +64,7 @@ class TestFindStream(unittest.TestCase):
         '''
         Test finding a stream when multiple streams are found
         '''
-        self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream_info, MagicMock()]
+        self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream, MagicMock()]
         stream_name = 'MultiStreams'
 
         # Acting and asserting
@@ -79,7 +75,7 @@ class TestFindStream(unittest.TestCase):
 
 class TestReceiveData(unittest.TestCase):
     '''
-    Test suite for the recieve_data function.
+    Test suite for the receive_data function.
     '''
     def setUp(self):
         '''
@@ -90,14 +86,13 @@ class TestReceiveData(unittest.TestCase):
         self.time_patcher = patch('tools.consume.receive.time')
         self.datetime_patcher = patch('tools.consume.receive.datetime')
         self.open_patcher = patch('tools.consume.receive.open', new_callable=mock_open)
-        self.mock_dataframe_class = self.pd_patcher.start()
+        self.mock_dataframe = self.pd_patcher.start()
         self.mock_time = self.time_patcher.start()
         self.mock_datetime = self.datetime_patcher.start()
         self.mock_open = self.open_patcher.start()
         
-        # --- Configure default mock behaviors ---
+        # Configure the mock time and datetime
         self.mock_time.time.side_effect = [0, 4, 6]  # Will return 0 on first call, 4 on second, 6 on third
-        # Makes sure time based loop will run for two times and then stops, prevents infinite loop
         self.mock_datetime.now.return_value = datetime(2025, 7, 22, 12, 0, 0)
         self.mock_df_instance = MagicMock()
         self.mock_dataframe.return_value = self.mock_df_instance
@@ -106,14 +101,14 @@ class TestReceiveData(unittest.TestCase):
         mock_stream_info = MagicMock()
         self.mock_stream_inlet.info.return_value = mock_stream_info
         
-        # Configure the info object's attributes
+        # Configure additional properties of the stream info
         mock_stream_info.name.return_value = 'TestStream'
         mock_stream_info.type.return_value = 'EEG'
         mock_stream_info.nominal_srate.return_value = '300'
         mock_stream_info.channel_count.return_value = 2
         mock_stream_info.as_xml.return_value = '<xml>...</xml>'
 
-        # Mock the deeply nested XML description structure
+        # Mock the stream's description and channels
         mock_desc = MagicMock()
         mock_channels = MagicMock()
         mock_ch = MagicMock()
@@ -125,7 +120,7 @@ class TestReceiveData(unittest.TestCase):
         mock_ch.next_sibling.return_value = mock_ch
         mock_reference.child_value.return_value = 'Ref1'
 
-        # Configure default data the stream will "receive"
+        # Mock data pulling from the stream
         mock_samples = [[1.0, 2.0], [1.1, 2.1]]
         mock_timestamps = [12345.1, 12345.2]
         self.mock_stream_inlet.pull_chunk.return_value = (mock_samples, mock_timestamps)
@@ -149,7 +144,7 @@ class TestReceiveData(unittest.TestCase):
             test_dur = 5
             
             # Acting
-            recieve_data(self.mock_stream_inlet, output_path, test_dur)
+            receive_data(self.mock_stream_inlet, output_path, test_dur)
 
             # Check that the DataFrame was created with correct columns
             self.mock_dataframe.assert_called_once()
@@ -174,5 +169,6 @@ class TestReceiveData(unittest.TestCase):
             expected_data = [[1, 1.0, 2.0, 12345.1], [2, 1.1, 2.1, 12345.2]]
             self.mock_dataframe.assert_called_once_with(expected_data, columns=expected_col)
             self.mock_df_instance.to_csv.assert_called_once_with(handle, index=False)    
+
 if __name__ == '__main__':
     unittest.main()
