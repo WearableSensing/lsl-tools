@@ -21,14 +21,14 @@ class TestFindStream(unittest.TestCase):
         self.mock_pylsl = self.pylsl_patcher.start()
 
         # --- Pre-define all the mock objects as instance attributes ---
-        self.mock_stream_info = MagicMock()
-        self.mock_stream_info.name.return_value = 'TestStream'
+        self.mock_stream = MagicMock()
+        self.mock_stream.name.return_value = 'TestStream'
 
-        self.mock_inlet_instance = MagicMock()
+        self.mock_inlet_inst = MagicMock()
 
         # --- Pre-configure the main mock's default behavior for a success case ---
-        self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream_info]
-        self.mock_pylsl.StreamInlet.return_value = self.mock_inlet_instance
+        self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream]
+        self.mock_pylsl.StreamInlet.return_value = self.mock_inlet_inst
 
     def tearDown(self):
         '''
@@ -49,13 +49,14 @@ class TestFindStream(unittest.TestCase):
         self.mock_pylsl.StreamInlet.assert_called_once_with(self.mock_stream)
         
         # Final check that function returns the correct inlet
-        self.assertEqual(result_inlet, mock_inlet_inst)
-        print("\nTestFindStream.test_find_stream_success passed")
+        self.assertEqual(result_inlet, self.mock_inlet_inst)
+        print("\n-----TestFindStream.test_find_stream_success passed-----")
         
     def test_find_stream_no_streams(self):
         '''
         Test finding a stream when no streams are found
         '''
+        self.mock_pylsl.resolve_byprop.return_value = []
         # Acting and asserting
         stream_name = 'NoStream'
         with self.assertRaises(Exception) as context:
@@ -63,21 +64,21 @@ class TestFindStream(unittest.TestCase):
         
         # Final check that function returns the correct inlet
         self.assertTrue('Could not find stream name' in str(context.exception))
-        print("\nTestFindStream.test_find_stream_no_streams passed")
+        print("\n-----TestFindStream.test_find_stream_no_streams passed-----")
 
     def test_find_stream_multiple_streams(self):
         '''
         Test finding a stream when multiple streams are found
         '''
         # Override the default return_value set in setUp for this specific test
-        self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream_info, MagicMock()]
+        self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream, MagicMock()]
         stream_name = 'MultiStreams'
 
         # Acting and asserting
         with self.assertRaises(Exception) as context:
             find_stream(stream_name)
         self.assertTrue('Expected one Stream.' in str(context.exception))
-        print("\nTestFindStream.test_find_stream_multiple_streams passed")
+        print("\n-----TestFindStream.test_find_stream_multiple_streams passed-----")
 
 
 class TestRecieveData(unittest.TestCase):
@@ -100,10 +101,11 @@ class TestRecieveData(unittest.TestCase):
         self.mock_open = self.open_patcher.start()
         
         # --- Configure default mock behaviors ---
-        self.mock_time.time.side_effect = [0, 10]  # Default for one loop iteration
-        self.mock_datetime.now.return_value = datetime(2025, 2, 25, 12, 0, 0)
+        self.mock_time.time.side_effect = [0, 4, 6]  # Will return 0 on first call, 4 on second, 6 on third
+        # Makes sure time based loop will run for two times and then stops, prevents infinite loop
+        self.mock_datetime.now.return_value = datetime(2025, 7, 22, 12, 0, 0)
         self.mock_df_instance = MagicMock()
-        self.mock_dataframe_class.return_value = self.mock_df_instance
+        self.mock_dataframe.return_value = self.mock_df_instance
 
         # --- Mock the pylsl.StreamInlet and its nested info object ---
         self.mock_stream_inlet = MagicMock()        
@@ -142,6 +144,47 @@ class TestRecieveData(unittest.TestCase):
         self.datetime_patcher.stop()
         self.open_patcher.stop()
         self.pd_patcher.stop()
+    
+    def test_data_collect_success(self):
+        '''
+        Test successful data collection and CSV writing.
+        '''
+        # Define the output path using a temporary directory
+        with tempfile.TemporaryDirectory() as temp_dir:
+            output_path = temp_dir
+            test_dur = 5
+            
+            # Acting
+            recieve_data(self.mock_stream_inlet, output_path, test_dur)
+
+            # Check that the DataFrame was created with correct columns
+            self.mock_dataframe.assert_called_once()
+            self.mock_df_instance.to_csv.assert_called_once()
+
+            # Check that the file was opened correctly and correct filename
+            expected_filename = f"DSIdata-{test_dur}s-20250722-120000.csv"
+            expected_full_path = os.path.join(output_path, expected_filename)
+            self.mock_open.assert_called_once_with(expected_full_path, 'w', newline='')
+                 # 'w' mode for writing, newline='' to avoid extra newlines in csv
+
+            # Check that the metadata was written to the file
+            handle = self.mock_open()
+            handle.write.assert_any_call('stream_name,TestStream\n')
+            handle.write.assert_any_call('daq_type,EEG\n')
+            handle.write.assert_any_call('units,microvolts\n')
+            handle.write.assert_any_call('reference,Ref1\n')
+            handle.write.assert_any_call('sample_rate,300\n')
+
+            # Check that the DataFrame was saved
+            expected_col = ['Timestamp', 'CH1', 'CH1', 'lsl_timestamp']
+            expected_data = [[1, 1.0, 2.0, 12345.1], [2, 1.1, 2.1, 12345.2]]
+            self.mock_dataframe.assert_called_once_with(expected_data, columns=expected_col)
+            self.mock_df_instance.to_csv.assert_called_once_with(handle, index=False)    
+
+            print("\n-----TestRecieveData.test_data_collect_success passed-----")
+
+
+    
 
 
 # Allows to run test by executing the script directly: 
