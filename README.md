@@ -37,11 +37,11 @@ python -m venv .venv
 Once activated, you will see **(venv)** appear at the beginning of your terminal prompt.
 
 ### 3. Install requirements.txt
-Once your virtual environment has been activated, we need to install all of the dependencies inside of requirements.txt in order to make the script run.
+Once your virtual environment has been activated, we need to install all of the dependencies in order to make the code run.
 * Paste this command into the terminal.
   
 ```sh
-pip install -r requirements.txt
+pip install -e .
 ```
 > [!NOTE]
 > Ensure your in the ```lsl-tools``` directory.

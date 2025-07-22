@@ -1,11 +1,13 @@
+import sys
+import os
 import unittest
 import pylsl
-from consume.receive import find_stream, recieve_data
 from unittest.mock import patch, MagicMock, mock_open
 from datetime import datetime
-import os
 import tempfile
 import pandas as pd
+
+from tools.consume.receive import find_stream, recieve_data
 
 class TestFindStream(unittest.TestCase):
     '''
@@ -17,7 +19,7 @@ class TestFindStream(unittest.TestCase):
         environment for the tests in this class.
         '''
         # Start the patcher for 'pylsl' and store the mock object on self
-        self.pylsl_patcher = patch('consume.receive.pylsl')
+        self.pylsl_patcher = patch('tools.consume.receive.pylsl')
         self.mock_pylsl = self.pylsl_patcher.start()
 
         # --- Pre-define all the mock objects as instance attributes ---
@@ -40,36 +42,32 @@ class TestFindStream(unittest.TestCase):
         '''
         Test successfully finding a stream by name
         '''
-        # Acting
         stream_name = 'TestStream'
         result_inlet = find_stream(stream_name) # This calls the actual function find_stream
 
         # Checks that methods were call corectly
         self.mock_pylsl.resolve_byprop.assert_called_once_with(prop='name', value=stream_name, timeout=10)
-        self.mock_pylsl.StreamInlet.assert_called_once_with(self.mock_stream)
+        self.mock_pylsl.StreamInlet.assert_called_once_with(self.mock_stream_info)
         
         # Final check that function returns the correct inlet
-        self.assertEqual(result_inlet, mock_inlet_inst)
-        print("\nTestFindStream.test_find_stream_success passed")
+        self.assertEqual(result_inlet, self.mock_inlet_instance)
         
     def test_find_stream_no_streams(self):
         '''
         Test finding a stream when no streams are found
         '''
-        # Acting and asserting
+        self.mock_pylsl.resolve_byprop.return_value = []
         stream_name = 'NoStream'
         with self.assertRaises(Exception) as context:
             find_stream(stream_name) # This calls the actual function find_stream
         
         # Final check that function returns the correct inlet
         self.assertTrue('Could not find stream name' in str(context.exception))
-        print("\nTestFindStream.test_find_stream_no_streams passed")
 
     def test_find_stream_multiple_streams(self):
         '''
         Test finding a stream when multiple streams are found
         '''
-        # Override the default return_value set in setUp for this specific test
         self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream_info, MagicMock()]
         stream_name = 'MultiStreams'
 
@@ -77,35 +75,31 @@ class TestFindStream(unittest.TestCase):
         with self.assertRaises(Exception) as context:
             find_stream(stream_name)
         self.assertTrue('Expected one Stream.' in str(context.exception))
-        print("\nTestFindStream.test_find_stream_multiple_streams passed")
 
 
-class TestRecieveData(unittest.TestCase):
+class TestReceiveData(unittest.TestCase):
     '''
-    Test suite for the receive_data function.
+    Test suite for the recieve_data function.
     '''
     def setUp(self):
         '''
         This method is run before each test. It sets up a shared mock
         environment for the tests in this class.
         '''
-        # Start the patcher for 'pylsl' and store the mock object on self
-        self.pd_patcher = patch('consume.receive.pd.DataFrame')
-        self.time_patcher = patch('consume.receive.time')
-        self.datetime_patcher = patch('consume.receive.datetime')
-        self.open_patcher = patch('consume.receive.open', new_callable=mock_open)
-        self.mock_dataframe = self.pd_patcher.start()
+        self.pd_patcher = patch('tools.consume.receive.pd.DataFrame')
+        self.time_patcher = patch('tools.consume.receive.time')
+        self.datetime_patcher = patch('tools.consume.receive.datetime')
+        self.open_patcher = patch('tools.consume.receive.open', new_callable=mock_open)
+        self.mock_dataframe_class = self.pd_patcher.start()
         self.mock_time = self.time_patcher.start()
         self.mock_datetime = self.datetime_patcher.start()
         self.mock_open = self.open_patcher.start()
         
-        # --- Configure default mock behaviors ---
         self.mock_time.time.side_effect = [0, 10]  # Default for one loop iteration
         self.mock_datetime.now.return_value = datetime(2025, 2, 25, 12, 0, 0)
         self.mock_df_instance = MagicMock()
         self.mock_dataframe_class.return_value = self.mock_df_instance
 
-        # --- Mock the pylsl.StreamInlet and its nested info object ---
         self.mock_stream_inlet = MagicMock()        
         mock_stream_info = MagicMock()
         self.mock_stream_inlet.info.return_value = mock_stream_info
@@ -135,16 +129,18 @@ class TestRecieveData(unittest.TestCase):
         self.mock_stream_inlet.pull_chunk.return_value = (mock_samples, mock_timestamps)
 
     def tearDown(self):
-        """
+        '''
         This method is run after each test to clean up by stopping all patchers.
-        """
+        '''
         self.time_patcher.stop()
         self.datetime_patcher.stop()
         self.open_patcher.stop()
         self.pd_patcher.stop()
 
+    # Add actual test methods for recieve_data if needed
+    # def test_recieve_data_basic(self):
+    #     ...existing code...
 
-# Allows to run test by executing the script directly: 
-# 'python -m unittest tests/consume/test_pylsl_receive.py'
+
 if __name__ == '__main__':
     unittest.main()
