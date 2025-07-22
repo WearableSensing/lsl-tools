@@ -37,11 +37,11 @@ python -m venv .venv
 Once activated, you will see **(venv)** appear at the beginning of your terminal prompt.
 
 ### 3. Install requirements.txt
-Once your virtual environment has been activated, we need to install all of the dependencies inside of requirements.txt in order to make the script run.
+Once your virtual environment has been activated, we need to install all of the dependencies in order to make the code run.
 * Paste this command into the terminal.
   
 ```sh
-pip install -r requirements.txt
+pip install -e .
 ```
 > [!NOTE]
 > Ensure your in the ```lsl-tools``` directory.
@@ -63,3 +63,17 @@ python consume/receive.py
 ```
 If the script was ran successfully, you should see a .csv file saved to your specified path.
 
+## Testing
+To run the test for the receive script. 
+
+### 1. Navigate
+Naviagte the the root of the project folder, 'lsl-tools'.
+
+### 2. Run
+> [!NOTE]
+> Make sure your virtual environment is still active
+
+Run the following in your terminal:
+```sh
+python -m unittest discover
+```

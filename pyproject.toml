@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lsl-tools"
+version = "0.1.0"
+description = "Tools for working with Lab Streaming Layer (LSL) streams."
+authors = [
+    { name = "Wearable Sensing" }
+]
+dependencies = [
+    "pylsl==1.16.2",
+    "pandas==2.3.1"
+]
+requires-python = ">=3.8"

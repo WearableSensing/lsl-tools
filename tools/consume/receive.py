@@ -43,7 +43,7 @@ def find_stream(stream_name: str) -> pylsl.StreamInlet:
     dsi_stream_inlet = pylsl.StreamInlet(dsi_stream)
     return dsi_stream_inlet
 
-def recieve_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -> None:
+def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -> None:
     '''
     Python script to record data from Wearable Sensing LSL stream (dsi2lsl).
     Records for specified duration and saves CSV to desired path.
@@ -143,4 +143,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     stream_info = find_stream(args.stream)
-    recieve_data(stream_info, args.output, args.duration)
+    receive_data(stream_info, args.output, args.duration)
