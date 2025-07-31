@@ -73,7 +73,9 @@ exclude = [
     ".git",
     "__pycache__",
     "build",  
-    "dist"       
+    "dist",
+    ".venv",
+    "venv"
 ]
 
 ignore = [

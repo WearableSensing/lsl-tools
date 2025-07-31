@@ -48,7 +48,7 @@ jobs:
         run: |
           black --check .
           isort --check-only .
-          flake8 .
+          flake8 --check.
 
   test:
     needs: lint # Runs after linting is successful
