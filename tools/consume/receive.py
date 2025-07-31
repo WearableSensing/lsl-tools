@@ -1,9 +1,9 @@
-import time
-from typing import List
-import pandas as pd
-from datetime import datetime
 import os
+import time
+from datetime import datetime
+from typing import List
 
+import pandas as pd
 import pylsl
 
 DEFAULT_DURATION = 10

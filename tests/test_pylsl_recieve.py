@@ -1,8 +1,8 @@
 import os
-import unittest
-from unittest.mock import patch, MagicMock, mock_open
-from datetime import datetime
 import tempfile
+import unittest
+from datetime import datetime
+from unittest.mock import MagicMock, mock_open, patch
 
 from tools.consume.receive import find_stream, receive_data
 
