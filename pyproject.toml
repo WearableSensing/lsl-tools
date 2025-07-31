@@ -18,8 +18,7 @@ dependencies = [
     "scipy==1.11.4"
 ]
 
-[project.license]
-file = "LICENSE"
+license = "MIT" 
 
 [project.optional-dependencies]
 dev = [
@@ -44,7 +43,7 @@ test = [
 # Python modules and packages that are included in the
 # distribution package (and therefore become importable)
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["."]
 include = ["*"]
 exclude = ["tests", "demo", "scripts"]
 
