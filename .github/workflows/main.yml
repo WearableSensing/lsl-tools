@@ -59,7 +59,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         # Use the Python versions specified in your pyproject.toml
-        python-version: ${{ matrix.python-version }}
+        python-version: [3.8, 3.9, 3.10, 3.11]  # Add this line
 
     steps:
       - name: Checkout repository
