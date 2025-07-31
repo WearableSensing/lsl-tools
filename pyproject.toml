@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=58.1.0", "wheel>=0.45.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -9,8 +9,100 @@ description = "Tools for working with Lab Streaming Layer (LSL) streams."
 authors = [
     { name = "Wearable Sensing" }
 ]
+readme = "README.md"
+requires-python = ">=3.8"
 dependencies = [
     "pylsl==1.16.2",
-    "pandas==2.3.1"
+    "pandas==2.3.1",
+    "numpy==1.24.3",
+    "scipy==1.11.4"
 ]
-requires-python = ">=3.8"
+
+[project.license]
+file = "LICENSE"
+
+[project.optional-dependencies]
+dev = [
+    "flake8==6.1.0",
+    "mypy==1.10.0",
+    "isort==5.12.0",
+    "black==23.7.0",
+    "coverage[toml]==7.3.2",
+    "twine==3.2.0",
+    "build==1.2.2.post1",
+    "pyinstaller==6.13.0"
+]
+release = [
+    "twine==3.2.0",
+    "build==1.2.2.post1",
+    "pyinstaller==6.13.0"
+]
+test = [
+    "coverage[toml]==7.3.2"
+]
+
+# Python modules and packages that are included in the
+# distribution package (and therefore become importable)
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["*"]
+exclude = ["tests", "demo", "scripts"]
+
+[tool.coverage.run]
+omit = [
+    "tests/*",
+    "demo/*",
+    "gui/*",
+    "scripts/*",
+    "acquisition/*",
+    "display/paradigm/*",
+    "signal/model/*",
+    "task/control/*",
+    "core/parameters/*",
+]
+
+[tool.coverage.report]
+max_complexity = 10
+max_line_length = 120
+application_import_names = "lsl-tools"
+
+[tool.flake8]
+
+max_complexity = 10
+max_line_length = 120
+application_import_names = "lsl-tools"
+
+ignore = [
+    "E203",  # Whitespace before ':'
+    "E501",  # Line too long
+    "W503",  # Line break before binary operator
+    "F401",  # Module imported but unused
+    "F403",  # 'from module import *' used; unable to detect undefined names
+]
+
+[tool.isort]
+skip = [".gitignore"]
+
+[tool.mypy]
+warn_return_any = false
+warn_unused_configs = false
+ignore_missing_imports = true
+follow_imports = "skip"
+strict_optional = true
+disallow_incomplete_defs = false
+check_untyped_defs = true
+no_implicit_optional = true
+exclude = [
+    "tests/.*",
+    "demo/.*",
+    "gui/.*",
+    "scripts/.*",
+    "acquisition/.*",
+    "display/paradigm/.*",
+    "signal/model/.*",
+    "task/control/.*",
+    "core/parameters/.*"
+]
+
+[tool.black]
+line-length = 120
