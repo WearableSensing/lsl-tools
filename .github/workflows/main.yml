@@ -70,13 +70,24 @@ jobs:
       - name: Install LSL library
         run: |
           if [ "$RUNNER_OS" == "Linux" ]; then
+            # Install build dependencies
             sudo apt-get update
-            sudo apt-get install -y software-properties-common
-            sudo add-apt-repository -y ppa:labstreaminglayer/ppa
-            sudo apt-get update
-            sudo apt-get install -y liblsl-dev
+            sudo apt-get install -y build-essential cmake git
+            
+            # Clone, build, and install liblsl from source
+            git clone --recursive https://github.com/sccn/liblsl.git
+            cd liblsl
+            mkdir build && cd build
+            cmake ..
+            make
+            sudo make install
+            
+            # Update linker cache
+            sudo ldconfig
+            
           elif [ "$RUNNER_OS" == "Windows" ]; then
             choco install liblsl
+            
           elif [ "$RUNNER_OS" == "macOS" ]; then
             brew install labstreaminglayer/tap/lsl
             echo "DYLD_LIBRARY_PATH=$(brew --prefix)/lib" >> $GITHUB_ENV
