@@ -61,7 +61,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         # Use the Python versions specified in your pyproject.toml
-        python-version: [3.8, 3.9, 3.10.0, 3.11]  # Add this line
+        python-version: [3.8, 3.9, 3.10, 3.11]  # Add this line
 
     steps:
       - name: Checkout repository
@@ -86,7 +86,7 @@ jobs:
             sudo ldconfig
             
           elif [ "$RUNNER_OS" == "Windows" ]; then
-            choco install liblsl
+            conda install -c conda-forge liblsl
             
           elif [ "$RUNNER_OS" == "macOS" ]; then
             brew install labstreaminglayer/tap/lsl
