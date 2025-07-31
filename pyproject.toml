@@ -61,9 +61,6 @@ omit = [
 ]
 
 [tool.coverage.report]
-max_complexity = 10
-max_line_length = 120
-application_import_names = "lsl-tools"
 
 [tool.flake8]
 max_complexity = 10

@@ -67,6 +67,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Install LSL library
+        run: |
+          if [ "$RUNNER_OS" == "Linux" ]; then
+            sudo apt-get update && sudo apt-get install -y liblsl-dev
+          elif [ "$RUNNER_OS" == "Windows" ]; then
+            choco install liblsl
+          elif [ "$RUNNER_OS" == "macOS" ]; then
+            brew install labstreaminglayer/tap/lsl
+            echo "DYLD_LIBRARY_PATH=$(brew --prefix)/lib" >> $GITHUB_ENV
+          fi
+        shell: bash
+        
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
         with:
