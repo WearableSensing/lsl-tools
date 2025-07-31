@@ -50,7 +50,7 @@ jobs:
           isort --check-only .
 
       - name: Run flake8
-        run: flake8 --config=pyproject.toml .
+        run: flake8 .
 
   test:
     needs: lint # Runs after linting is successful
