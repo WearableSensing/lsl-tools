@@ -28,6 +28,7 @@ jobs:
           mypy ./
 
   lint: 
+    needs: type-check # Runs after type checking
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -86,7 +87,7 @@ jobs:
             sudo ldconfig
             
           elif [ "$RUNNER_OS" == "Windows" ]; then
-            conda install -c conda-forge liblsl
+            choco install liblsl
             
           elif [ "$RUNNER_OS" == "macOS" ]; then
             brew install labstreaminglayer/tap/lsl
