@@ -104,7 +104,7 @@ def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
             f.write(f"sample_rate,{info.nominal_srate()}\n")
             df.to_csv(f, index=False)
 
-        print(f"\nRecording finished.")
+        print("\nRecording finished.")
         print(f"Saved {len(df)} samples to {full_path}")
 
     except KeyboardInterrupt:
