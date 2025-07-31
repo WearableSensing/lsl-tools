@@ -28,7 +28,7 @@ jobs:
           mypy ./
 
   lint: 
-    needs: type-check # Runs after type checking
+    # needs: type-check # Runs after type checking
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -54,7 +54,7 @@ jobs:
         run: flake8 . --max-line-length=120 --ignore=E203,E501,W503,F401,F403
 
   test:
-    needs: lint # Runs after linting is successful
+    # needs: lint # Runs after linting is successful
     runs-on: ${{ matrix.os }} 
     strategy:
       # Don't cancel all jobs if one fails
@@ -62,7 +62,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
         # Use the Python versions specified in your pyproject.toml
-        python-version: [3.8, 3.9, 3.10, 3.11]  # Add this line
+        python-version: ['3.8', '3.9', '3.10', '3.11']  # Add this line
 
     steps:
       - name: Checkout repository
@@ -87,7 +87,18 @@ jobs:
             sudo ldconfig
             
           elif [ "$RUNNER_OS" == "Windows" ]; then
-            choco install liblsl
+            # Clone and build liblsl from source
+            git clone --recursive https://github.com/sccn/liblsl.git
+            cd liblsl
+            mkdir build && cd build
+            
+            # Configure and build using CMake
+            cmake ..
+            cmake --build . --config Release
+            
+            # Install the library and add its bin directory to the PATH
+            cmake --build . --config Release --target install
+            echo "C:\Program Files (x86)\lsl\bin" >> $GITHUB_PATH
             
           elif [ "$RUNNER_OS" == "macOS" ]; then
             brew install labstreaminglayer/tap/lsl
@@ -126,7 +137,7 @@ jobs:
           path: coverage.xml
 
   build:
-    needs: test # Runs after tests
+    # needs: test # Runs after tests
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
