@@ -48,7 +48,9 @@ jobs:
         run: |
           black --check .
           isort --check-only .
-          flake8 .
+
+      - name: Run flake8
+        run: flake8 --config=pyproject.toml .
 
   test:
     needs: lint # Runs after linting is successful
