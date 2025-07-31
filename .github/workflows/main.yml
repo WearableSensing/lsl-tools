@@ -25,7 +25,7 @@ jobs:
       - name: Install and run mypy
         run: |
           pip install .[dev]
-          mypy src/
+          mypy ./
 
   lint: 
     runs-on: ubuntu-latest
