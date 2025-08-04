@@ -47,7 +47,8 @@ jobs:
             
             # Install the library and add its bin directory to the PATH
             cmake --build . --config Release --target install
-            echo "C:\Program Files (x86)\lsl\bin" >> $GITHUB_PATH
+            echo 'C:\Program Files (x86)\lsl\bin' >> $GITHUB_PATH
+          fi
 
           coverage run -m unittest discover
           coverage report -m -b
