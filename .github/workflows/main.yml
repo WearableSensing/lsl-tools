@@ -35,20 +35,7 @@ jobs:
       - name: test
         shell: bash
         run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            # Clone and build liblsl from source
-            git clone --recursive https://github.com/sccn/liblsl.git
-            cd liblsl
-            mkdir build && cd build
-            
-            # Configure and build using CMake
-            cmake ..
-            cmake --build . --config Release
-            
-            # Install the library and add its bin directory to the PATH
-            cmake --build . --config Release --target install
-            echo 'C:\Program Files (x86)\lsl\bin' >> $GITHUB_PATH
-          fi
+          conda install -c conda-forge liblsl
 
           coverage run -m unittest discover
           coverage report -m -b
