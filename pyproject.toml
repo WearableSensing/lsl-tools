@@ -13,8 +13,6 @@ readme = "README.md"
 requires-python = ">=3.9"
 dependencies = [
     "pylsl==1.16.2",
-    "pandas==2.3.1",
-    "numpy==1.24.3",
     "scipy==1.11.4"
 ]
 
@@ -22,26 +20,15 @@ license = { file = "LICENSE" }
 
 [project.optional-dependencies]
 dev = [
-    "flake8==7.3.0",
     "mypy==1.10.0",
-    "isort==5.12.0",
     "black==23.7.0",
     "coverage[toml]==7.3.2",
-    "twine==3.2.0",
-    "build==1.2.2.post1",
-    "pyinstaller==6.13.0"
 ]
-release = [
-    "twine>=4.0.0",
-    "build>=1.0.0",
-    "pyinstaller>=6.0.0"
-]
+
 test = [
     "coverage[toml]==7.3.2"
 ]
 
-# Python modules and packages that are included in the
-# distribution package (and therefore become importable)
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["*"]
@@ -50,41 +37,9 @@ exclude = ["tests", "demo", "scripts"]
 [tool.coverage.run]
 omit = [
     "tests/*",
-    "demo/*",
-    "gui/*",
-    "scripts/*",
-    "acquisition/*",
-    "display/paradigm/*",
-    "signal/model/*",
-    "task/control/*",
-    "core/parameters/*",
 ]
 
 [tool.coverage.report]
-
-[tool.flake8]
-max_complexity = 10
-max_line_length = 120
-application_import_names = "lsl-tools"
-exclude = [
-    ".git",
-    "__pycache__",
-    "build",  
-    "dist",
-    ".venv",
-    "venv"
-]
-
-ignore = [
-    "E203",  # Whitespace before ':'
-    "E501",  # Line too long
-    "W503",  # Line break before binary operator
-    "F401",  # Module imported but unused
-    "F403",  # 'from module import *' used; unable to detect undefined names
-]
-
-[tool.isort]
-skip = [".gitignore"]
 
 [tool.mypy]
 warn_return_any = false
@@ -96,10 +51,6 @@ disallow_incomplete_defs = false
 check_untyped_defs = true
 no_implicit_optional = true
 exclude = [
-    "build/.*",
-    "tests/.*",
-    "demo/.*",
-    "gui/.*",
     "scripts/.*",
     "acquisition/.*",
     "display/paradigm/.*",
