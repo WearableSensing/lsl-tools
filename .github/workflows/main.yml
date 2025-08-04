@@ -27,12 +27,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install .[dev]
       - name: lint
-          black --check .
+        run: black --check .
 
       - name: type-check
-          mypy ./
+        run: mypy ./
 
       - name: test
+        shell: bash
         run: |
           if [ "$RUNNER_OS" == "Windows" ]; then
             # Clone and build liblsl from source
@@ -47,8 +48,7 @@ jobs:
             # Install the library and add its bin directory to the PATH
             cmake --build . --config Release --target install
             echo "C:\Program Files (x86)\lsl\bin" >> $GITHUB_PATH
-        shell: bash
-        run: |
+
           coverage run -m unittest discover
           coverage report -m -b
           coverage xml
