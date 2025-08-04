@@ -38,7 +38,6 @@ jobs:
         shell: bash
         run: |
           conda install -c conda-forge liblsl
-
-          coverage run -m unittest discover
-          coverage report -m -b
+          coverage run --branch -m unittest discover
+          coverage report -m
           coverage xml
