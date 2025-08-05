@@ -7,8 +7,8 @@ import os
 import pylsl
 
 DEFAULT_DURATION = 10
-DEFAULT_STREAM_NAME = 'WS-default'
-DEFAULT_OUTPUT_PATH = '.' 
+DEFAULT_STREAM_NAME = "WS-default"
+DEFAULT_OUTPUT_PATH = "."
 
 
 def find_stream(stream_name: str) -> pylsl.StreamInlet:
@@ -20,40 +20,43 @@ def find_stream(stream_name: str) -> pylsl.StreamInlet:
         dsi_stream_inlet (pylsl.StreamInlet): The inlet for the found stream.
     """
 
-    print('Looking for EEG streams')
-    streams = pylsl.resolve_byprop(prop='name', value=stream_name, timeout=10)
+    print("Looking for EEG streams")
+    streams = pylsl.resolve_byprop(prop="name", value=stream_name, timeout=10)
     # If timeout, end stream to prevent terminal from being frozen.
     if len(streams) == 0:
         raise Exception(f"Could not find stream name {stream_name}. Ending now...")
-    
+
     dsi_stream = None
     num_streams = len(streams)
-    print(f'Found {num_streams} stream(s):')
+    print(f"Found {num_streams} stream(s):")
 
     if num_streams > 1:
-        raise Exception(f'{num_streams} found. Expected one Stream. Please close other streams.')
+        raise Exception(
+            f"{num_streams} found. Expected one Stream. Please close other streams."
+        )
 
     for _, stream in enumerate(streams):
-            print(f"Name: '{stream.name()}'")
-            dsi_stream = stream
+        print(f"Name: '{stream.name()}'")
+        dsi_stream = stream
 
     if not dsi_stream:
-        raise Exception('No DSI stream found')
+        raise Exception("No DSI stream found")
 
     dsi_stream_inlet = pylsl.StreamInlet(dsi_stream)
     return dsi_stream_inlet
 
+
 def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -> None:
-    '''
+    """
     Python script to record data from Wearable Sensing LSL stream (dsi2lsl).
     Records for specified duration and saves CSV to desired path.
     Args:
         stream (pylsl.StreamInlet): The LSL stream inlet to read data from.
-        output_path (str): The path where the CSV file will be saved.   
+        output_path (str): The path where the CSV file will be saved.
         duration (float): The duration in seconds for which to collect data.
-    Returns:    
+    Returns:
         None
-    '''
+    """
     try:
         # Generate unique filename for new CSV file.
         timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -65,7 +68,7 @@ def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
         print(f"Stream info: {info.name()} ({info.type()})")
         # Print stream metadata from the desc xml
         print(f"Stream description: {info.as_xml()}")
-        
+
         # Get channel labels.
         ch = info.desc().child("channels").child("channel")
         units = ch.child_value("unit")
@@ -73,16 +76,16 @@ def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
         for _ in range(info.channel_count()):
             labels.append(ch.child_value("label"))
             ch = ch.next_sibling()
-        
+
         # Create column names in same row as channels.
-        columns = ['Timestamp'] + labels + ['lsl_timestamp']
-        
+        columns = ["Timestamp"] + labels + ["lsl_timestamp"]
+
         # Collect all the data first.
         all_data = []
         start_time = time.time()
         sample_counter = 1
-        
-        print(f'\nCollecting data for {duration}s... (Interrupt [Ctrl-C] to stop)\n')
+
+        print(f"\nCollecting data for {duration}s... (Interrupt [Ctrl-C] to stop)\n")
         # While loop that records data for duration and ensures data is correctly paired in each row.
         while time.time() - start_time < duration:
             samples, timestamps = stream.pull_chunk()
@@ -91,26 +94,29 @@ def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
                     row = [sample_counter] + sample + [lsl_timestamp]
                     all_data.append(row)
                     sample_counter += 1
-                    
+
         # Create DataFrame and save to CSV.
         df = pd.DataFrame(all_data, columns=columns)
-        
+
         # Write the metadata to the CSV file header
-        with open(full_path, 'w', newline='') as f:
+        with open(full_path, "w", newline="") as f:
             f.write(f"stream_name,{info.name()}\n")
             f.write(f"daq_type,{info.type()}\n")
             f.write(f"units,{units}\n")
-            f.write(f"reference,{info.desc().child('reference').child_value('label')}\n")
+            f.write(
+                f"reference,{info.desc().child('reference').child_value('label')}\n"
+            )
             f.write(f"sample_rate,{info.nominal_srate()}\n")
             df.to_csv(f, index=False)
-        
+
         print(f"\nRecording finished.")
         print(f"Saved {len(df)} samples to {full_path}")
 
     except KeyboardInterrupt:
-        print('\nInterrupted by user (Ctrl+C). Exiting gracefully...')
+        print("\nInterrupted by user (Ctrl+C). Exiting gracefully...")
     except Exception as e:
-        print(f'Error: {e}')
+        print(f"Error: {e}")
+
 
 if __name__ == "__main__":
     """
@@ -119,6 +125,7 @@ if __name__ == "__main__":
     If no arguments are provided, uses default values.
     """
     import argparse
+
     parser = argparse.ArgumentParser(
         description="A script that collects data from a DSI stream and writes it a file."
     )
@@ -126,21 +133,21 @@ if __name__ == "__main__":
         "--output",
         type=str,
         help="The path where data should be written to.",
-        default=DEFAULT_OUTPUT_PATH
+        default=DEFAULT_OUTPUT_PATH,
     )
     parser.add_argument(
         "--stream",
         type=str,
         help="The stream name configured in the LSL app.",
-        default=DEFAULT_STREAM_NAME
+        default=DEFAULT_STREAM_NAME,
     )
     parser.add_argument(
         "--duration",
         type=int,
         default=DEFAULT_DURATION,
-        help="The duration in seconds for the data collection to run (default: 30)."
+        help="The duration in seconds for the data collection to run (default: 30).",
     )
     args = parser.parse_args()
-    
+
     stream_info = find_stream(args.stream)
     receive_data(stream_info, args.output, args.duration)
