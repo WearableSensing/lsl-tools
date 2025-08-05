@@ -1,8 +1,8 @@
 import os
-import unittest
-from unittest.mock import patch, MagicMock, mock_open
-from datetime import datetime
 import tempfile
+import unittest
+from datetime import datetime
+from unittest.mock import MagicMock, mock_open, patch
 
 from tools.consume.receive import find_stream, receive_data
 
@@ -42,14 +42,10 @@ class TestFindStream(unittest.TestCase):
         Test finding a stream by name when it exists.
         """
         stream_name = "TestStream"
-        result_inlet = find_stream(
-            stream_name
-        )  # Calls find_stream method from consume.receive module.
+        result_inlet = find_stream(stream_name)  # Calls find_stream method from consume.receive module.
 
         # Checks that methods were called corectly
-        self.mock_pylsl.resolve_byprop.assert_called_once_with(
-            prop="name", value=stream_name, timeout=10
-        )
+        self.mock_pylsl.resolve_byprop.assert_called_once_with(prop="name", value=stream_name, timeout=10)
         self.mock_pylsl.StreamInlet.assert_called_once_with(self.mock_stream)
 
         self.assertEqual(result_inlet, self.mock_inlet_inst)
@@ -61,9 +57,7 @@ class TestFindStream(unittest.TestCase):
         self.mock_pylsl.resolve_byprop.return_value = []
         stream_name = "NoStream"
         with self.assertRaises(Exception) as context:
-            find_stream(
-                stream_name
-            )  # Calls find_stream method from consume.receive module.
+            find_stream(stream_name)  # Calls find_stream method from consume.receive module.
 
         # Final check that function returns the correct inlet
         self.assertTrue("Could not find stream name" in str(context.exception))
@@ -127,15 +121,9 @@ class TestReceiveData(unittest.TestCase):
         mock_ch = MagicMock()
         mock_reference = MagicMock()
         mock_stream_info.desc.return_value = mock_desc
-        mock_desc.child.side_effect = lambda x: {
-            "channels": mock_channels,
-            "reference": mock_reference,
-        }[x]
+        mock_desc.child.side_effect = lambda x: {"channels": mock_channels, "reference": mock_reference}[x]
         mock_channels.child.return_value = mock_ch
-        mock_ch.child_value.side_effect = lambda x: {
-            "label": "CH1",
-            "unit": "microvolts",
-        }[x]
+        mock_ch.child_value.side_effect = lambda x: {"label": "CH1", "unit": "microvolts"}[x]
         mock_ch.next_sibling.return_value = mock_ch
         mock_reference.child_value.return_value = "Ref1"
 
@@ -186,9 +174,7 @@ class TestReceiveData(unittest.TestCase):
             # Check that the DataFrame was saved
             expected_col = ["Timestamp", "CH1", "CH1", "lsl_timestamp"]
             expected_data = [[1, 1.0, 2.0, 12345.1], [2, 1.1, 2.1, 12345.2]]
-            self.mock_dataframe.assert_called_once_with(
-                expected_data, columns=expected_col
-            )
+            self.mock_dataframe.assert_called_once_with(expected_data, columns=expected_col)
             self.mock_df_instance.to_csv.assert_called_once_with(handle, index=False)
 
 

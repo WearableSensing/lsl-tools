@@ -1,9 +1,8 @@
-import time
-from typing import List
-import pandas as pd
-from datetime import datetime
 import os
+import time
+from datetime import datetime
 
+import pandas as pd
 import pylsl
 
 DEFAULT_DURATION = 10
@@ -31,9 +30,7 @@ def find_stream(stream_name: str) -> pylsl.StreamInlet:
     print(f"Found {num_streams} stream(s):")
 
     if num_streams > 1:
-        raise Exception(
-            f"{num_streams} found. Expected one Stream. Please close other streams."
-        )
+        raise Exception(f"{num_streams} found. Expected one Stream. Please close other streams.")
 
     for _, stream in enumerate(streams):
         print(f"Name: '{stream.name()}'")
@@ -109,7 +106,7 @@ def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
             f.write(f"sample_rate,{info.nominal_srate()}\n")
             df.to_csv(f, index=False)
 
-        print(f"\nRecording finished.")
+        print("\nRecording finished.")
         print(f"Saved {len(df)} samples to {full_path}")
 
     except KeyboardInterrupt:
@@ -126,20 +123,12 @@ if __name__ == "__main__":
     """
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="A script that collects data from a DSI stream and writes it a file."
+    parser = argparse.ArgumentParser(description="A script that collects data from a DSI stream and writes it a file.")
+    parser.add_argument(
+        "--output", type=str, help="The path where data should be written to.", default=DEFAULT_OUTPUT_PATH
     )
     parser.add_argument(
-        "--output",
-        type=str,
-        help="The path where data should be written to.",
-        default=DEFAULT_OUTPUT_PATH,
-    )
-    parser.add_argument(
-        "--stream",
-        type=str,
-        help="The stream name configured in the LSL app.",
-        default=DEFAULT_STREAM_NAME,
+        "--stream", type=str, help="The stream name configured in the LSL app.", default=DEFAULT_STREAM_NAME
     )
     parser.add_argument(
         "--duration",
