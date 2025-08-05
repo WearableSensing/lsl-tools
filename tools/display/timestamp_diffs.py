@@ -44,7 +44,7 @@ def lsl_timestamp_diffs(csv_filepath: str, start_value: int, end_value: int):
     plt.ylabel("Difference (seconds)")
 
     plt.plot(diffs, label="Timestamp Difference")
-    max_y_value = np.max(diffs)
+    max_y_value: float = np.max(diffs)
     plt.ylim(top=max_y_value * 1.2)
 
     for idx in spike_indices:
@@ -55,9 +55,7 @@ def lsl_timestamp_diffs(csv_filepath: str, start_value: int, end_value: int):
             xytext=(0, 15),
             textcoords="offset points",
             ha="center",
-            arrowprops=dict(
-                arrowstyle="->", connectionstyle="arc3,rad=.2", color="red"
-            ),
+            arrowprops=dict(arrowstyle="->", connectionstyle="arc3,rad=.2", color="red"),
         )
         plt.plot(idx, peak_value, "ro", label="_nolegend_")
 

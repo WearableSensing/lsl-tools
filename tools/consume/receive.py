@@ -100,9 +100,7 @@ def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
             f.write(f"stream_name,{info.name()}\n")
             f.write(f"daq_type,{info.type()}\n")
             f.write(f"units,{units}\n")
-            f.write(
-                f"reference,{info.desc().child('reference').child_value('label')}\n"
-            )
+            f.write(f"reference,{info.desc().child('reference').child_value('label')}\n")
             f.write(f"sample_rate,{info.nominal_srate()}\n")
             df.to_csv(f, index=False)
 
