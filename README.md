@@ -64,17 +64,44 @@ python tools/consume/receive.py
 ```
 If the script was ran successfully, you should see a .csv file saved to your specified path.
 
-## Testing
-To run the test for the receive script. 
+## Developer Guidelines
 
-### 1. Navigate
-Naviagte the the root of the project folder, 'lsl-tools'.
+This section is for developers who wish to contribute to the lsl-tools repository. To maintain code quality and consistency, please follow these guidelines.
 
-### 2. Run
-> [!NOTE]
-> Make sure your virtual environment is still active
+### 1. Development Setup
 
-Run the following in your terminal:
-```sh
-python -m unittest discover
+Install all development dependencies, including tools for formatting, linting, and testing, by running this command from the project's root directory:
+
+```Bash
+pip install -e .[dev]
 ```
+
+### 2. Pre-Push Quality Checks
+
+The project uses a GitHub Actions workflow to automatically check all pushes and pull requests. To avoid breaking the build, please run these same checks locally on your machine before pushing your changes.
+
+#### A. Format Code (Black)
+
+Run this command to automatically have black format your code before committing:
+
+```Bash
+black .
+```
+
+#### B. Type Checking (MyPy)
+
+Run the following command to use mypy to check your code for type errors:
+
+```Bash
+mypy ./
+```
+
+#### C. Run Tests (Unittest & Coverage)
+
+Ensure that all tests pass. You can run the same command locally:
+
+```Bash
+coverage run --branch -m unittest discover
+```
+
+After the tests complete, you can view a quick coverage report in your terminal with coverage report -m.

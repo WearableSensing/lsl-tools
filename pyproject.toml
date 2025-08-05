@@ -54,11 +54,6 @@ no_implicit_optional = true
 exclude = [
     "build/.*",
     "scripts/.*",
-    "acquisition/.*",
-    "display/paradigm/.*",
-    "signal/model/.*",
-    "task/control/.*",
-    "core/parameters/.*"
 ]
 
 [tool.black]
