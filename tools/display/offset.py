@@ -43,6 +43,7 @@ def plot_statistics_summary(diffs: np.ndarray, show: bool):
             bbox=dict(boxstyle="round,pad=0.5", fc="wheat", alpha=0.5),
         )
 
+
 def load_csv(csv_filepath: str, col_name: str):
     """
     This function reads the col_name from a CSV.
@@ -110,31 +111,17 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="A script that reads a CSV file, calculates the differences between consecutive timestamps, and annotates every peak."
     )
+    parser.add_argument("--filepath", type=str, help="The path to the CSV file. (Required)", required=True)
     parser.add_argument(
-        "--filepath", 
-        type=str, 
-        help="The path to the CSV file. (Required)", 
-        required=True
+        "--start", type=int, default=0, help="Allows the crop start sample number to visualize plot better"
     )
+    parser.add_argument("--end", type=int, default=0, help="Allows the crop end sample number to visualize plot better")
     parser.add_argument(
-        "--start", 
-        type=int, 
-        default=0, 
-        help="Allows the crop start sample number to visualize plot better"
-    )
-    parser.add_argument(
-        "--end", 
-        type=int, 
-        default=0, 
-        help="Allows the crop end sample number to visualize plot better"
-    )
-    parser.add_argument(
-        "--show", 
+        "--show",
         type=bool,
-        default=False, 
-        help="Allows to show a stats table describing the mean, range, and std to observe "
+        default=False,
+        help="Allows to show a stats table describing the mean, range, and std to observe ",
     )
-    
 
     args = parser.parse_args()
 
