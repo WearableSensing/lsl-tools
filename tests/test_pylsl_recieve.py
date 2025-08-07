@@ -95,7 +95,11 @@ class TestReceiveData(unittest.TestCase):
         self.mock_open = self.open_patcher.start()
 
         # Configure the mock time and datetime
-        self.mock_time.time.side_effect = [0, 4, 6]  # Will return 0 on first call, 4 on second, 6 on third
+        self.mock_time.time.side_effect = [
+            0,
+            4,
+            6,
+        ]  # Will return 0 on first call, 4 on second, 6 on third
         self.mock_datetime.now.return_value = datetime(2025, 7, 22, 12, 0, 0)
         self.mock_df_instance = MagicMock()
         self.mock_dataframe.return_value = self.mock_df_instance

@@ -1,5 +1,6 @@
 import os
 import time
+
 from datetime import datetime
 
 import pandas as pd
@@ -11,10 +12,11 @@ DEFAULT_OUTPUT_PATH = "."
 
 
 def find_stream(stream_name: str) -> pylsl.StreamInlet:
-    """
-    Finds the LSL stream by name and returns a StreamInlet for data collection.
+    """Finds the LSL stream by name and returns a StreamInlet for data collection.
+
     Args:
         stream_name (str): The name of the stream to find.
+
     Returns:
         dsi_stream_inlet (pylsl.StreamInlet): The inlet for the found stream.
     """
@@ -30,27 +32,28 @@ def find_stream(stream_name: str) -> pylsl.StreamInlet:
     print(f"Found {num_streams} stream(s):")
 
     if num_streams > 1:
-        raise Exception(f"{num_streams} found. Expected one Stream. Please close other streams.")
+        raise Exception(f"{num_streams} found. Expected one Stream. Please close " f"other streams.")
 
     for _, stream in enumerate(streams):
         print(f"Name: '{stream.name()}'")
         dsi_stream = stream
 
     if not dsi_stream:
-        raise Exception("No DSI stream found")
+        raise Exception("No DSI stream found.")
 
     dsi_stream_inlet = pylsl.StreamInlet(dsi_stream)
     return dsi_stream_inlet
 
 
 def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -> None:
-    """
-    Python script to record data from Wearable Sensing LSL stream (dsi2lsl).
+    """Python script to record data from Wearable Sensing LSL stream (dsi2lsl).
     Records for specified duration and saves CSV to desired path.
+
     Args:
         stream (pylsl.StreamInlet): The LSL stream inlet to read data from.
         output_path (str): The path where the CSV file will be saved.
         duration (float): The duration in seconds for which to collect data.
+
     Returns:
         None
     """
@@ -82,8 +85,8 @@ def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
         start_time = time.time()
         sample_counter = 1
 
-        print(f"\nCollecting data for {duration}s... (Interrupt [Ctrl-C] to stop)\n")
-        # While loop that records data for duration and ensures data is correctly paired in each row.
+        print(f"\nCollecting data for {duration}s... " "(Interrupt [Ctrl-C] to stop)\n")
+        # Loop records data for duration, ensures each row is paired.
         while time.time() - start_time < duration:
             samples, timestamps = stream.pull_chunk()
             if samples:
@@ -114,14 +117,15 @@ def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
 
 
 if __name__ == "__main__":
-    """
-    Main entry point for the script to collect data from a DSI stream.
+    """Main entry point for the script to collect data from a DSI stream.
     Parses command line arguments for output path, stream name, and duration.
     If no arguments are provided, uses default values.
     """
     import argparse
 
-    parser = argparse.ArgumentParser(description="A script that collects data from a DSI stream and writes it a file.")
+    parser = argparse.ArgumentParser(
+        description="A script that collects data from a DSI stream and writes " "it a file."
+    )
     parser.add_argument(
         "--output", type=str, help="The path where data should be written to.", default=DEFAULT_OUTPUT_PATH
     )
@@ -132,7 +136,7 @@ if __name__ == "__main__":
         "--duration",
         type=int,
         default=DEFAULT_DURATION,
-        help="The duration in seconds for the data collection to run (default: 30).",
+        help="The duration in seconds for the data collection to run " "(default: 30).",
     )
     args = parser.parse_args()
 

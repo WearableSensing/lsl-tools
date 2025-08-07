@@ -54,6 +54,7 @@ no_implicit_optional = true
 exclude = [
     "build/.*",
     "scripts/.*",
+    "BciPy/.*"
 ]
 
 [tool.black]
