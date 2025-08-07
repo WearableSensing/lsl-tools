@@ -1,6 +1,9 @@
 # Ignore Python virtual environment
 .venv/
 
+# Ignore BciPy directory
+BciPy/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
