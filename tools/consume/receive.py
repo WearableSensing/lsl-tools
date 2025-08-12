@@ -58,16 +58,16 @@ def receive_data(stream: pylsl.StreamInlet, output_path: str, duration: float) -
         None
     """
     try:
-        # Generate unique filename for new CSV file.
-        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-        unique_filename = f"DSIdata-{duration}s-{timestamp}.csv"
-        full_path = os.path.join(output_path, unique_filename)
-
         # Get stream metadata.
         info = stream.info()
         print(f"Stream info: {info.name()} ({info.type()})")
         # Print stream metadata from the desc xml
         print(f"Stream description: {info.as_xml()}")
+
+        # Generate unique filename for new CSV file.
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        unique_filename = f"DSIdata-{duration}s-{timestamp}-{info.name()}.csv"
+        full_path = os.path.join(output_path, unique_filename)
 
         # Get channel labels.
         ch = info.desc().child("channels").child("channel")
