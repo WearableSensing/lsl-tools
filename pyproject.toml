@@ -10,11 +10,12 @@ authors = [
     { name = "Wearable Sensing" }
 ]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9,<3.11"
 dependencies = [
     "pylsl==1.16.2",
     "scipy==1.11.4",
     "pandas==2.3.1",
+    "psychopy==2025.1.1",
 ]
 
 license = { file = "LICENSE" }

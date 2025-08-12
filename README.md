@@ -105,3 +105,17 @@ coverage run --branch -m unittest discover
 ```
 
 After the tests complete, you can view a quick coverage report in your terminal with coverage report -m.
+
+### To run experiments
+
+#### photodiode
+
+```bash
+py -m tools.photodiode_experiment
+```
+
+To record with the experiment
+
+```bash
+py -m tools.photodiode_experiment --record
+```
