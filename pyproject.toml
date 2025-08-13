@@ -10,11 +10,12 @@ authors = [
     { name = "Wearable Sensing" }
 ]
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.9,<3.13"
 dependencies = [
     "pylsl==1.16.2",
     "scipy==1.11.4",
     "pandas==2.3.1",
+    "psychopy==2025.1.1",
 ]
 
 license = { file = "LICENSE" }
@@ -24,6 +25,8 @@ dev = [
     "mypy==1.10.0",
     "black==23.7.0",
     "coverage[toml]==7.3.2",
+    "flake8==7.3.0",
+    "flake8-pyproject"
 ]
 
 test = [
@@ -54,7 +57,17 @@ no_implicit_optional = true
 exclude = [
     "build/.*",
     "scripts/.*",
+    "BciPy/.*"
 ]
 
 [tool.black]
-line-length = 120
+line-length = 79
+
+[tool.flake8]
+line-length = 79
+exclude = [
+    ".venv",
+    "build",
+    "BciPy/.*",
+    "tests"
+]
