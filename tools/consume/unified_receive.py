@@ -8,9 +8,7 @@ from pylsl import StreamInlet, resolve_streams
 from typing import Tuple
 
 
-def find_stream(
-    stream_names: list[str],
-) -> Tuple[list[StreamInlet], dict]:
+def find_stream(stream_names: list[str]) -> Tuple[list[StreamInlet], dict]:
     """
     Finds the LSL stream by name and its info, then returns a StreamInlet
     for data collection.
@@ -53,14 +51,21 @@ def find_stream(
             print(f"Warning: Stream '{name}' not found.")
 
     if not inlets:
-        raise RuntimeError("Error: No specified LSL streams were found. Cannot continue.")
+        raise RuntimeError("Error: No specified LSL streams were found. \
+                           Cannot continue.")
     return inlets, stream_channel_labels
 
 
-def unified_receive(inlets, duration: int) -> str:
+def unified_receive(inlets: list[StreamInlet], duration: int) -> str:
     """
-    Records multiple LSL streams, fetches their channel names, and formats
-    the output into a single "wide" format CSV with descriptive headers.
+    Receives the information from the LSL streams, and outputs into a 
+    single "wide" format CSV with descriptive headers.
+
+    Args:
+        inlets (list[StreamInlet]): List of stream inlets to consume.
+        duration (int): The duration of the experiment to record.
+
+    Returns: temp_filename (str): Temporary CSV file's name
     """
     print("--- Unified Recorder ---")
 
@@ -68,7 +73,8 @@ def unified_receive(inlets, duration: int) -> str:
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     temp_filename = f"temp-{timestamp}.csv"
     max_channels = max(inlet.info().channel_count() for inlet in inlets)
-    csv_headers = ["lsl_timestamp", "stream_name"] + [f"value_ch{i+1}" for i in range(max_channels)]
+    csv_headers = (["lsl_timestamp", "stream_name"] 
+                   + [f"value_ch{i+1}" for i in range(max_channels)])
 
     print(f"\nRecording raw data to temporary file: {temp_filename}")
     with open(temp_filename, "w", newline="") as f:
@@ -86,8 +92,19 @@ def unified_receive(inlets, duration: int) -> str:
     return temp_filename
 
 
-def format_csv(final_filename_base: str, temp_filename: str, stream_channel_labels: dict):
-    # Format the data using the fetched channel names
+def format_csv(final_filename_base: str, temp_filename: str,
+               stream_channel_labels: dict) -> None:
+    """
+    Reformats the CSV file data to have channels on top and the data value
+    listed in columns.
+
+    Args:
+        final_filename_base (str): The final CSV file name.
+        temp_filename (str): Temporary CSV file's name.
+        stream_channel_labels (dict): A dictionary of labels from each inlets
+
+    Returns: None
+    """
     try:
         df = pd.read_csv(temp_filename)
 
@@ -98,16 +115,20 @@ def format_csv(final_filename_base: str, temp_filename: str, stream_channel_labe
             stream_df.dropna(axis=1, how="all", inplace=True)
 
             # Rename generic columns (value_ch1) to real channel names
-            original_cols = [col for col in stream_df.columns if col.startswith("value_ch")]
+            original_cols = ([col for col in stream_df.columns 
+                              if col.startswith("value_ch")])
             real_labels = stream_channel_labels.get(name, [])
             # Create unique final names like "StreamName_ChannelName"
-            rename_dict = {orig: f"{name}_{label}" for orig, label in zip(original_cols, real_labels)}
+            rename_dict = {orig: f"{name}_{label}" for orig, 
+                           label in zip(original_cols, real_labels)}
             stream_df.rename(columns=rename_dict, inplace=True)
 
             streams[name] = stream_df
 
-        headset_stream_name = max(streams, key=lambda name: streams[name].shape[1])
-        marker_stream_name = min(streams, key=lambda name: streams[name].shape[1])
+        headset_stream_name = max(streams, 
+                                  key=lambda name: streams[name].shape[1])
+        marker_stream_name = min(streams, 
+                                 key=lambda name: streams[name].shape[1])
 
         headset_df = streams[headset_stream_name]
         marker_df = streams[marker_stream_name]
@@ -117,10 +138,12 @@ def format_csv(final_filename_base: str, temp_filename: str, stream_channel_labe
         marker_df = marker_df.sort_values("lsl_timestamp")
 
         formatted_df = pd.merge_asof(
-            left=headset_df, right=marker_df, on="lsl_timestamp", direction="backward", tolerance=0.5
+            left=headset_df, right=marker_df, on="lsl_timestamp", 
+            direction="backward", tolerance=0.5
         )
         # Fill NaN for marker columns and set type to int
-        marker_cols = [col for col in formatted_df.columns if marker_stream_name in col]
+        marker_cols = [col for col in formatted_df.columns 
+                       if marker_stream_name in col]
         for col in marker_cols:
             formatted_df[col] = formatted_df[col].fillna(0).astype(int)
 
@@ -138,10 +161,23 @@ def format_csv(final_filename_base: str, temp_filename: str, stream_channel_labe
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="LSL Unified Recorder and Formatter")
-    parser.add_argument("--streams", nargs="+", required=True, help="List of LSL stream names.")
-    parser.add_argument("--duration", type=int, required=True, help="Recording duration in seconds.")
-    parser.add_argument("--filename", type=str, required=True, help="Base for the final output filename.")
+    parser = argparse.ArgumentParser(
+        description="LSL Unified Recorder and Formatter")
+    parser.add_argument(
+        "--streams", 
+        nargs="+", 
+        required=True, 
+        help="List of LSL stream names.")
+    parser.add_argument(
+        "--duration", 
+        type=int, 
+        required=True, 
+        help="Recording duration in seconds.")
+    parser.add_argument(
+        "--filename", 
+        type=str, 
+        required=True, 
+        help="Base for the final output filename.")
 
     args = parser.parse_args()
     inlets, stream_channel_labels = find_stream(args.streams)
