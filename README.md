@@ -106,15 +106,19 @@ coverage run --branch -m unittest discover
 
 After the tests complete, you can view a quick coverage report in your terminal with coverage report -m.
 
-### To run experiments
+### Running Experiments
 
-#### photodiode
+#### Photodiode Experiment
+
+To run the experiment, you will need to run it as a modeule.
+Run the follow script in the terminal to run the photodiode experiment by itself.
 
 ```bash
 py -m tools.photodiode_experiment
 ```
 
-To record with the experiment
+This experiment also comes with the option to record the data from the experiment that then can be used with display/offset.py to visualize. 
+Run the following code to do so:
 
 ```bash
 py -m tools.photodiode_experiment --record
