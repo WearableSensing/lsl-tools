@@ -1,8 +1,6 @@
 from psychopy import visual, core
 import serial
-from .consume.receive import receive_data, find_stream
 from pylsl import StreamInfo, StreamOutlet
-import threading
 
 """PsychoPy Photodiode Experiment for Clock Synchronization.
 
@@ -70,15 +68,16 @@ def multiTrigHandler(port, arg1, outlet, arg2):
     outlet.push_sample(arg2)
 
 
-def photodiode(portStr: str, trials: int, display_rate: float,
-               outlet: StreamOutlet) -> None:
+def photodiode(
+    portStr: str, trials: int, display_rate: float, outlet: StreamOutlet
+) -> None:
     """
     The photodiode experiment using PsychoPy. It will flash a white white for
-    "trials" amount of time at a rate of "display_rate". While doing so, it 
+    "trials" amount of time at a rate of "display_rate". While doing so, it
     will send a trigger to the software "outlet" as well as the hardware port.
 
     Args:
-        portStr (str): The port MMBTS is connected to in str form (Ex: COM10) 
+        portStr (str): The port MMBTS is connected to in str form (Ex: COM10)
         trials (int): The numbers of trials the experiment will run.
         display_rate (float): The rate at the trial will be running at.
         outlet (StreamOutlet): The LSL outlet which the trigger will be sent to
@@ -88,16 +87,18 @@ def photodiode(portStr: str, trials: int, display_rate: float,
     port = serial.Serial(portStr)  # Change the COM port to match your setup
 
     # Set up the PsychoPy Window and Stimuli
-    win = visual.Window(monitor="testMonitor", units="pix", color="gray",
-                        fullscr=True)
+    win = visual.Window(
+        monitor="testMonitor", units="pix", color="gray", fullscr=True
+    )
     win_width, win_height = win.size
     # Rectangle to represent the trigger light
     rect_size = (200, 200)
     top_right_x = (win_width / 2) - (rect_size[0] / 2)
     top_right_y = (win_height / 2) - (rect_size[1] / 2)
     top_right_pos = (top_right_x, top_right_y)
-    lightTrig = visual.Rect(win, size=rect_size, fillColor="white",
-                            pos=top_right_pos)
+    lightTrig = visual.Rect(
+        win, size=rect_size, fillColor="white", pos=top_right_pos
+    )
 
     Trigger = 2  # trigger code must be between 2-255, 1 set for photodiode
 
@@ -112,8 +113,9 @@ def photodiode(portStr: str, trials: int, display_rate: float,
         core.wait(1.0)
 
     # Experiment paramters
-    disRate = visual.TextStim(win, text="Display Rate:" 
-                              + str(display_rate), pos=(0, -25))
+    disRate = visual.TextStim(
+        win, text="Display Rate:" + str(display_rate), pos=(0, -25)
+    )
     curTrial = visual.TextStim(win)
     trialHeader = visual.TextStim(win, text="Trial #:", pos=(-20, 0))
 
@@ -125,13 +127,15 @@ def photodiode(portStr: str, trials: int, display_rate: float,
         trialHeader.draw()
         lightTrig.draw()
         # Show the stimulus and send the marker almost simultaneously
-        win.callOnFlip(multiTrigHandler, port, bytes(chr(Trigger), "utf-8"),
-                       outlet, [3])
+        win.callOnFlip(
+            multiTrigHandler, port, bytes(chr(Trigger), "utf-8"), outlet, [3]
+        )
         win.flip()
-        core.wait(display_rate) 
+        core.wait(display_rate)
 
-        win.callOnFlip(multiTrigHandler, port, bytes(chr(0), "utf-8"),
-                       outlet, [0])
+        win.callOnFlip(
+            multiTrigHandler, port, bytes(chr(0), "utf-8"), outlet, [0]
+        )
         disRate.draw()
         trialHeader.draw()
         win.flip()
@@ -148,58 +152,69 @@ if __name__ == "__main__":
     import subprocess  # Import subprocess
     import sys  # Import sys to get python executable
 
-    parser = argparse.ArgumentParser(description="A script that runs a \
-                                     simple photodiode experiment")
+    parser = argparse.ArgumentParser(
+        description="A script that runs a \
+                                     simple photodiode experiment"
+    )
     parser.add_argument(
         "--port",
         default=DEFAULT_PORT,
         type=str,
-        help="The COM port (ex: 'COM10')")
+        help="The COM port (ex: 'COM10')",
+    )
     parser.add_argument(
         "--trialAmount",
         type=int,
         default=DEFAULT_TRIAL_AMOUNT,
-        help="Number of trials")
+        help="Number of trials",
+    )
     parser.add_argument(
         "--displayRate",
         type=float,
         default=DEFAULT_DISPLAY_RATE,
-        help="Display rate in seconds")
+        help="Display rate in seconds",
+    )
     parser.add_argument(
         "--record",
         action="store_true",
-        help="Enable recording with the unified recorder.")
+        help="Enable recording with the unified recorder.",
+    )
     parser.add_argument(
         "--stream",
         type=str,
         default=DEFAULT_STREAM_NAME,
-        help="The hardware stream name.")
+        help="The hardware stream name.",
+    )
     parser.add_argument(
         "--output",
         type=str,
         default=DEFAULT_OUTPUT_PATH,
-        help="The path for the output file.")
+        help="The path for the output file.",
+    )
     args = parser.parse_args()
 
     # Create the LSL outlet for markers
     softwareOutlet = createMarkerStream()
 
     recorder_process = None
-    if args.record: # Only records when asked
+    if args.record:  # Only records when asked
         import os
 
-        # Get the directory where this script (photodiode_experiment.py) is 
+        # Get the directory where this script (photodiode_experiment.py) is
         # located
         current_script_dir = os.path.dirname(os.path.abspath(__file__))
 
         # Join that path with the relative path to the recorder
-        recorder_script_path = os.path.join(current_script_dir, "consume",
-                                            "unified_receive.py")
+        recorder_script_path = os.path.join(
+            current_script_dir, "consume", "unified_receive.py"
+        )
 
         # Check if the file actually exists before trying to run it
         if not os.path.exists(recorder_script_path):
-            print(f"FATAL ERROR: Recorder script not found at \
-                  {recorder_script_path}")
+            print(
+                f"FATAL ERROR: Recorder script not found at \
+                  {recorder_script_path}"
+            )
             quit()
 
         # Calculate the total duration needed for the recording
@@ -225,10 +240,11 @@ if __name__ == "__main__":
 
     # Run the experiment with no recording
     try:
-        photodiode(args.port, args.trialAmount, args.displayRate,
-                   softwareOutlet)
-        
-    finally: # Ensure the recorder process is terminated and we see its output
+        photodiode(
+            args.port, args.trialAmount, args.displayRate, softwareOutlet
+        )
+
+    finally:  # Ensure the recorder process is terminated and we see its output
         if recorder_process:
             print("Waiting for recorder to finish...")
             stdout, stderr = recorder_process.communicate()

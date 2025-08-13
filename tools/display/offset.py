@@ -8,6 +8,7 @@ DEFAULT_SOFTWARE_CH_NAME = "PsychoPyMarkers_SoftwareMarker"
 DEFAULT_HARDWARE_CH_NAME = "WS-default_TRG"
 DEFAULT_TIMESTAMP_CH_NAME = "lsl_timestamp"
 
+
 def plot_offset_difference(offsets: list[list], labels: list[str]) -> None:
     """
     Plots the change in signal offsets over time on a different graph.
@@ -24,8 +25,13 @@ def plot_offset_difference(offsets: list[list], labels: list[str]) -> None:
     index = 0
     for o in offsets:
         if o:
-            ax.plot(range(1, len(o) + 1), o, marker="o", linestyle="-", 
-                    label=labels[index])
+            ax.plot(
+                range(1, len(o) + 1),
+                o,
+                marker="o",
+                linestyle="-",
+                label=labels[index],
+            )
         index += 1
 
     # Labels and Titles
@@ -40,9 +46,13 @@ def plot_offset_difference(offsets: list[list], labels: list[str]) -> None:
 
     plt.tight_layout()
 
-def calculate_time_offsets(source_rises: list[int], target_rises: list[int], 
-                           data: pd.DataFrame, timestamp_col: str 
-                           ) -> list[float]:
+
+def calculate_time_offsets(
+    source_rises: list[int],
+    target_rises: list[int],
+    data: pd.DataFrame,
+    timestamp_col: str,
+) -> list[float]:
     """
     Calculates the offsets based on the rises of each signal.
 
@@ -51,7 +61,7 @@ def calculate_time_offsets(source_rises: list[int], target_rises: list[int],
         target_rises (list[int]): The rising index of the target.
         data (pd.DataFrame): The data extracted from the CSV file.
         timestamp_col (str): The name of the timestamp column.
-    
+
         Returns:
             offset (list): The list of offsets
 
@@ -61,19 +71,21 @@ def calculate_time_offsets(source_rises: list[int], target_rises: list[int],
     for i in range(num_events):
         source_idx = source_rises[i]
         target_idx = target_rises[i]
-        time_offset = (data[timestamp_col][target_idx] 
-                       - data[timestamp_col][source_idx])
+        time_offset = (
+            data[timestamp_col][target_idx] - data[timestamp_col][source_idx]
+        )
         offset.append(time_offset)
     return offset
 
+
 def format_display_text(label: str, offset: list[float]) -> str:
     """
-    Formats the display text to include detailed statistics including mean, 
+    Formats the display text to include detailed statistics including mean,
     std, min, max, and range.
 
     Args:
         label (str): The label for the offset stats
-        offset (list[float]): The list of offsets 
+        offset (list[float]): The list of offsets
 
     Returns: stats_text (str): The stats as str
     """
@@ -98,20 +110,23 @@ def format_display_text(label: str, offset: list[float]) -> str:
     return stats_text
 
 
-def offset_hardware_software(csv_filepath: str, softChannel: str, 
-                             hardChannel: str, timestamp_col: str, 
-                             hardwareTrigVal: list[int]
-                             ) -> Tuple[list[float], list[float]]:
+def offset_hardware_software(
+    csv_filepath: str,
+    softChannel: str,
+    hardChannel: str,
+    timestamp_col: str,
+    hardwareTrigVal: list[int],
+) -> list[list[float]]:
     """
-    Loads channels, separates one into components, plots them with timestamp 
-    annotations, and calculates the separate offsets from the lightdiode 
+    Loads channels, separates one into components, plots them with timestamp
+    annotations, and calculates the separate offsets from the lightdiode
     the other signals.
 
     Args:
         csv_filepath (str): The file path to the CSV to analyze.
-        softChannel (str): The name of the software channel column 
+        softChannel (str): The name of the software channel column
                             (e.g., PsychoPy marker).
-        hardChannel (str): The name of the composite hardware channel 
+        hardChannel (str): The name of the composite hardware channel
                             to be separated (e.g., WS-default_TRG).
         timestamp_col (str): The name of the timestamp column.
         hardwareTrigVal (list[int]): The trigger values for each hardware
@@ -122,7 +137,7 @@ def offset_hardware_software(csv_filepath: str, softChannel: str,
     # Check if file exist
     if not os.path.exists(csv_filepath):
         print(f"Error: The file '{csv_filepath}' was not found.")
-        return [], []
+        return [[], []]
 
     try:
         # Read all required columns from the CSV at once
@@ -142,10 +157,20 @@ def offset_hardware_software(csv_filepath: str, softChannel: str,
         fig, ax = plt.subplots(figsize=(10, 6))
 
         # Plot the signals
-        ax.plot(data.index, data[softChannel], label=softChannel, 
-                color="blue", drawstyle="steps-post")
-        ax.plot(data.index, data["MMBTS"], label="MMBTS (Step to 2)", 
-                color="green", drawstyle="steps-post")
+        ax.plot(
+            data.index,
+            data[softChannel],
+            label=softChannel,
+            color="blue",
+            drawstyle="steps-post",
+        )
+        ax.plot(
+            data.index,
+            data["MMBTS"],
+            label="MMBTS (Step to 2)",
+            color="green",
+            drawstyle="steps-post",
+        )
         ax.plot(
             data.index,
             data["lightdiode"],
@@ -163,7 +188,7 @@ def offset_hardware_software(csv_filepath: str, softChannel: str,
             rise_events[signal] = indices
             print(f"  Found {len(indices)} events for '{signal}'.")
 
-        # Annotate the plot 
+        # Annotate the plot
         for signal, indices in rise_events.items():
             for index in indices:
                 x_pos, y_pos = index, data[signal][index]
@@ -182,16 +207,19 @@ def offset_hardware_software(csv_filepath: str, softChannel: str,
         lightdiode_rises = rise_events.get("lightdiode", [])
         mmbts_rises = rise_events.get("MMBTS", [])
         psychopy_rises = rise_events.get(softChannel, [])
-        offsets_mmbts = calculate_time_offsets(lightdiode_rises, mmbts_rises, 
-                                               data, timestamp_col)
-        offsets_psychopy = calculate_time_offsets(lightdiode_rises, 
-                                                  psychopy_rises, data, 
-                                                  timestamp_col)
+        offsets_mmbts = calculate_time_offsets(
+            lightdiode_rises, mmbts_rises, data, timestamp_col
+        )
+        offsets_psychopy = calculate_time_offsets(
+            lightdiode_rises, psychopy_rises, data, timestamp_col
+        )
 
-        display_text_mmbts = format_display_text("Offset (MMBTS)", 
-                                                 offsets_mmbts)
-        display_text_psychopy = format_display_text("Offset (PsychoPy)", 
-                                                    offsets_psychopy)
+        display_text_mmbts = format_display_text(
+            "Offset (MMBTS)", offsets_mmbts
+        )
+        display_text_psychopy = format_display_text(
+            "Offset (PsychoPy)", offsets_psychopy
+        )
         final_display_text = f"{display_text_mmbts}\n\n{display_text_psychopy}"
 
         # The stats table
@@ -207,8 +235,11 @@ def offset_hardware_software(csv_filepath: str, softChannel: str,
         )
 
         # labels and a title
-        ax.set_title("Comparison of PsychoPy Marker and Separated TRG \
-                     Components", fontsize=16)
+        ax.set_title(
+            "Comparison of PsychoPy Marker and Separated TRG \
+                     Components",
+            fontsize=16,
+        )
         ax.set_xlabel("Sample Index", fontsize=12)
         ax.set_ylabel("Signal Value", fontsize=12)
         ax.legend()
@@ -217,55 +248,52 @@ def offset_hardware_software(csv_filepath: str, softChannel: str,
         ax.set_ylim(-0.5, 3.5)
         plt.tight_layout()
 
-        return offsets_mmbts, offsets_psychopy
+        return [offsets_mmbts, offsets_psychopy]
 
     except ValueError:
         print(
             f"Error: Could not find one or more columns in the file \
                 '{csv_filepath}'. Please double-check the column names."
         )
-        return [], []
+        return [[], []]
     except Exception as e:
         print(f"An unexpected error occurred: {e}")
-        return [], []
+        return [[], []]
 
 
 if __name__ == "__main__":
     import argparse
+
     parser = argparse.ArgumentParser(
         description="A script that reads a CSV file, calculates the "
         "offsets between triggers"
     )
     parser.add_argument(
-        "--filepath", 
-        type=str, 
-        help="The path to the CSV file. (Required)", 
-        required=True)
-    parser.add_argument(
-        "--hs",
-        action="store_true",
-        help="Runs offset_hardware_software")
-    parser.add_argument(
-        "--sofware", 
-        type=str, default=DEFAULT_SOFTWARE_CH_NAME, 
-        help="The software channel name"
+        "--filepath",
+        type=str,
+        help="The path to the CSV file. (Required)",
+        required=True,
     )
     parser.add_argument(
-        "--hardware", 
-        type=str, default=DEFAULT_HARDWARE_CH_NAME, 
-        help="The hardware cahnnel name"
+        "--hs", action="store_true", help="Runs offset_hardware_software"
     )
     parser.add_argument(
-        "--timestamp", 
-        type=str, default=DEFAULT_TIMESTAMP_CH_NAME, 
-        help="The timestamp channel name"
+        "--software",
+        type=str,
+        default=DEFAULT_SOFTWARE_CH_NAME,
+        help="The software channel name",
+    )
+    parser.add_argument(
+        "--hardware",
+        type=str,
+        default=DEFAULT_HARDWARE_CH_NAME,
+        help="The hardware cahnnel name",
     )
     parser.add_argument(
         "--timestamp",
         type=str,
-        default=False,
-        help="Allows to show a stats table describing the " 
-                "mean, range, and std to observe.",
+        default=DEFAULT_TIMESTAMP_CH_NAME,
+        help="The timestamp channel name",
     )
 
     args = parser.parse_args()
@@ -276,7 +304,7 @@ if __name__ == "__main__":
             softChannel=args.software,
             hardChannel=args.hardware,
             timestamp_col=args.timestamp,
-            hardwareTrigVal=[1,2]
+            hardwareTrigVal=[1, 2],
         )
         # Call the second function to generate the offset drift plot
         plot_offset_difference(offsets, ["mmbts_offsets", "psychopy_offsets"])

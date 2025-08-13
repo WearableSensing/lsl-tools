@@ -1,8 +1,6 @@
 import os
 import argparse
 
-from typing import List
-
 import numpy as np
 import pandas as pd
 
@@ -10,7 +8,7 @@ from matplotlib import pyplot as plt
 from scipy.signal import find_peaks
 
 
-def plot_statistics_summary(diffs: np.ndarray, show: bool):
+def plot_statistics_summary(diffs: np.ndarray, show: bool) -> None:
     """Creates a histogram to visualize the statistical distribution of
     timestamp differences.
 
@@ -50,7 +48,7 @@ def plot_statistics_summary(diffs: np.ndarray, show: bool):
         )
 
 
-def load_csv(csv_filepath: str, col_name: str):
+def load_csv(csv_filepath: str, col_name: str) -> pd.DataFrame:
     """This function reads the col_name from a CSV.
 
     Args:
@@ -61,7 +59,9 @@ def load_csv(csv_filepath: str, col_name: str):
         pd.DataFrame: The DataFrame containing the specified column.
     """
     if not os.path.exists(csv_filepath):
-        raise FileNotFoundError(f"Error: The file '{csv_filepath}' was not found.")
+        raise FileNotFoundError(
+            f"Error: The file '{csv_filepath}' was not found."
+        )
 
     try:
         data = pd.read_csv(csv_filepath, skiprows=5, usecols=[col_name])
@@ -69,11 +69,15 @@ def load_csv(csv_filepath: str, col_name: str):
         raise IOError(f"Error reading CSV file: {e}")
 
     if col_name not in data.columns:
-        raise ValueError("Error: CSV file must contain a column named 'lsl_timestamp'.")
+        raise ValueError(
+            "Error: CSV file must contain a column named 'lsl_timestamp'."
+        )
     return data
 
 
-def lsl_timestamp_diffs(diffs: np.ndarray, start_value: int, end_value: int, show: bool):
+def lsl_timestamp_diffs(
+    diffs: np.ndarray, start_value: int, end_value: int, show: bool
+):
     """Plots timestamp differences and optionally shows statistics.
 
     Args:
@@ -114,18 +118,30 @@ if __name__ == "__main__":
         description="A script that reads a CSV file, calculates the "
         "differences between consecutive timestamps, and annotates every peak."
     )
-    parser.add_argument("--filepath", type=str, help="The path to the CSV file. (Required)", required=True)
     parser.add_argument(
-        "--start", type=int, default=0, help="Allows the crop start sample number to visualize" " plot better"
+        "--filepath",
+        type=str,
+        help="The path to the CSV file. (Required)",
+        required=True,
     )
     parser.add_argument(
-        "--end", type=int, default=0, help="Allows the crop end sample number to visualize" " plot better"
+        "--start",
+        type=int,
+        default=0,
+        help="Allows the crop start sample number to visualize" " plot better",
+    )
+    parser.add_argument(
+        "--end",
+        type=int,
+        default=0,
+        help="Allows the crop end sample number to visualize" " plot better",
     )
     parser.add_argument(
         "--show",
         type=bool,
         default=False,
-        help="Allows to show a stats table describing the " "mean, range, and std to observe.",
+        help="Allows to show a stats table describing the "
+        "mean, range, and std to observe.",
     )
 
     args = parser.parse_args()
