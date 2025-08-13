@@ -2,7 +2,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import numpy as np
-from typing import Tuple
 
 DEFAULT_SOFTWARE_CH_NAME = "PsychoPyMarkers_SoftwareMarker"
 DEFAULT_HARDWARE_CH_NAME = "WS-default_TRG"
