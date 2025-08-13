@@ -158,7 +158,7 @@ class TestReceiveData(unittest.TestCase):
             self.mock_df_instance.to_csv.assert_called_once()
 
             # Check that the file was opened correctly and correct filename
-            expected_filename = f"DSIdata-{test_dur}s-20250722-120000.csv"
+            expected_filename = f"DSIdata-{test_dur}s-20250722-120000-TestStream.csv"
             expected_full_path = os.path.join(output_path, expected_filename)
             self.mock_open.assert_called_once_with(expected_full_path, "w", newline="")
             # 'w' mode for writing, newline='' to avoid extra newlines in csv
