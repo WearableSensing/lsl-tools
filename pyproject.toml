@@ -60,3 +60,12 @@ exclude = [
 
 [tool.black]
 line-length = 120
+
+[tool.flake8]
+line-length = 79
+exclude = [
+    ".venv",
+    "build",
+    "BciPy/.*",
+    "tests"
+]
