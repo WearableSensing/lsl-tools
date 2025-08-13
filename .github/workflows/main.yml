@@ -28,7 +28,9 @@ jobs:
           pip install -U -f https://extras.wxpython.org/wxPython4/extras/linux/gtk3/ wxPython
           pip install .[dev]
       - name: lint
-        run: black --check .
+        run: |
+          black --check .
+          flake8 .
 
       - name: type-check
         run: mypy ./

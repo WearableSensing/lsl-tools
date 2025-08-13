@@ -109,16 +109,14 @@ def receive_data(
         # Create DataFrame and save to CSV.
         df = pd.DataFrame(all_data, columns=columns)
 
-        reference_label = info.desc().child('reference').child_value('label')
+        reference_label = info.desc().child("reference").child_value("label")
         # Write the metadata to the CSV file header
         with open(full_path, "w", newline="") as f:
             f.write(f"stream_name,{info.name()}\n")
             f.write(f"daq_type,{info.type()}\n")
             f.write(f"units,{units}\n")
-            
-            f.write(
-                f"reference,{reference_label}\n"
-            )
+
+            f.write(f"reference,{reference_label}\n")
             f.write(f"sample_rate,{info.nominal_srate()}\n")
             df.to_csv(f, index=False)
 
