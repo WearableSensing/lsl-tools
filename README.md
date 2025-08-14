@@ -110,16 +110,39 @@ After the tests complete, you can view a quick coverage report in your terminal 
 
 #### Photodiode Experiment
 
-To run the experiment, you will need to run it as a modeule.
 Run the follow script in the terminal to run the photodiode experiment by itself.
 
 ```bash
-py -m tools.photodiode_experiment
+py tools/experiment/photodiode.py
 ```
 
 This experiment also comes with the option to record the data from the experiment that then can be used with display/offset.py to visualize. 
 Run the following code to do so:
 
 ```bash
-py -m tools.photodiode_experiment --record
+py tools/experiment/photodiode.py --record
 ```
+
+"""PsychoPy Photodiode Experiment for Clock Synchronization.
+
+This script displays a simple visual stimulus (e.g., a flashing square)
+intended to be captured by a photodiode. Its primary purpose is to generate
+events that can be used to measure and correct for timing offsets (clock drift)
+between the stimulus presentation computer and an LSL-streaming data
+acquisition system (e.g., a DSI headset).
+
+Prerequisites:
+    - Hardware:
+        - MMTBS (Mobile-Modular-Tactor-Brain-System)
+        - DSI headset with a connected photodiode
+    - Software:
+        - Python 3.10+
+        - PsychoPy library
+        - dsi2lsl application running in the background to stream data.
+
+Usage:
+    1. Ensure all hardware is connected correctly.
+    2. Start the dsi2lsl application to begin the LSL stream.
+    3. Run this script with/without record.
+    4. Use the display/offset.py tool to see visual representation.
+"""
