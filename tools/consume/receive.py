@@ -27,7 +27,8 @@ def find_stream(stream_name: str) -> pylsl.StreamInlet:
     # If timeout, end stream to prevent terminal from being frozen.
     if len(streams) == 0:
         raise Exception(
-            f"Could not find stream name {stream_name}. Ending now..."
+            f"Could not find stream name {stream_name}. \
+                        Ending now..."
         )
 
     dsi_stream = None
@@ -36,7 +37,8 @@ def find_stream(stream_name: str) -> pylsl.StreamInlet:
 
     if num_streams > 1:
         raise Exception(
-            f"{num_streams} found. Expected one Stream. Please close "
+            f"{num_streams} found. Expected one Stream. \
+                Please close "
             f"other streams."
         )
 

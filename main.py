@@ -95,7 +95,8 @@ def run_photodiode_experiment():
 
         if not streams_to_record:
             print(
-                "Warning: Recording requested, but no streams were specified."
+                "Warning: Recording requested, but no streams \
+                  were specified."
             )
         else:
             # This assumes your recorder script is in a 'consume' subdirectory
@@ -177,7 +178,8 @@ def get_boolean_input(prompt):
             return False
         else:
             print(
-                "Invalid input. Please enter 'True', 'False', 'Yes', or 'No'."
+                "Invalid input. Please enter 'True', 'False', 'Yes', \
+                  or 'No'."
             )
 
 

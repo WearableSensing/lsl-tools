@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import Tuple
+from typing import Tuple, Optional
 import argparse
 
 
@@ -18,6 +18,7 @@ def plot_offset(
     timestamp_col: str,
     source_channel: str,
     target_channels: list[str],
+    offset_value: Optional[float] = 0.0,
 ) -> None:
     """
     Plots channel signals, annotates rise times, and displays offset stats.
@@ -45,7 +46,11 @@ def plot_offset(
     offsets_to_plot = []
     for i, channel in enumerate(target_channels):
         offsets = calculate_time_offsets(
-            source_rises, target_rises_list[i], data, timestamp_col
+            source_rises,
+            target_rises_list[i],
+            data,
+            timestamp_col,
+            offset_value,
         )
         offsets_to_plot.append(offsets)
         stats_text = format_display_text(f"Offset ({channel})", offsets)
@@ -227,6 +232,7 @@ def calculate_time_offsets(
     target_rises: list[int],
     data: pd.DataFrame,
     timestamp_col: str,
+    offset_value: Optional[float] = 0.0,
 ) -> list[float]:
     """
     Calculates the timestamp offsets between a source and target signal.
@@ -273,7 +279,7 @@ def calculate_time_offsets(
     target_times = data.loc[target_rises_truncated, timestamp_col].values
 
     # Calculate the offsets by direct, element-wise subtraction.
-    offsets = target_times - source_times
+    offsets = (target_times - source_times) - offset_value
 
     # Convert the resulting NumPy array to a list and return it.
     return offsets.tolist()
@@ -422,6 +428,14 @@ if __name__ == "__main__":
         action="store_true",
         help="Split the hardware triggers first",
     )
+    parser.add_argument(
+        "--offset",
+        type=float,
+        default=0.0,
+        help="A offset value you can add, it will not affect the normal graph \
+            It will only show a difference on the offset difference graph and \
+                stats table.",
+    )
     args = parser.parse_args()
 
     filepath = args.filepath
@@ -430,4 +444,4 @@ if __name__ == "__main__":
         filepath = "split_" + filepath
 
     data = preprocess(filepath, args.timestamp, args.source, args.targets)
-    plot_offset(data, args.timestamp, args.source, args.targets)
+    plot_offset(data, args.timestamp, args.source, args.targets, args.offset)
