@@ -9,7 +9,7 @@ import argparse
 DEFAULT_SOFTWARE_CH_NAME = "PsychoPyMarkers_SoftwareMarker"
 DEFAULT_HARDWARE_CH_NAME = "WS-default_TRG"
 DEFAULT_TIMESTAMP_CH_NAME = "lsl_timestamp"
-DEFAULT_TARGETS = ["mmbts", "software"]
+DEFAULT_TARGETS = ["mmbts", "lightdiode"]
 
 
 # just plotting the values
