@@ -27,7 +27,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install .[dev]
       - name: lint
-        run: black --check .
+        run: |
+          flake8 .
 
       - name: type-check
         run: mypy ./
