@@ -112,13 +112,10 @@ After the tests complete, you can view a quick coverage report in your terminal 
 
 PsychoPy Photodiode Experiment for Clock Synchronization.
 
-This script displays a simple visual stimulus (e.g., a flashing square)
-intended to be captured by a photodiode. Its primary purpose is to generate
-events that can be used to measure and correct for timing offsets (clock drift)
-between the stimulus presentation computer and an LSL-streaming data
-acquisition system (e.g., a DSI headset).
+This script displays a simple visual stimulus (e.g., a flashing square) intended to be captured by a photodiode. Its primary purpose is to generate events that can be used to measure and correct for timing offsets (clock drift) between the stimulus presentation computer and an LSL-streaming data acquisition system (e.g., a DSI headset).
 
-Prerequisites:
+###### Prerequisites:
+
     - Hardware:
         - MMTBS (Mobile-Modular-Tactor-Brain-System)
         - DSI headset with a connected photodiode
@@ -127,7 +124,13 @@ Prerequisites:
         - PsychoPy library
         - dsi2lsl application running in the background to stream data.
 
-Usage:
+###### Usage:
+
     1. Ensure all hardware is connected correctly.
     2. Start the dsi2lsl application to begin the LSL stream.
-    3. Use the display/offset.py tool to see visual representation.
+    3. On main select to run the photodiode experiment and its args
+    4. Use the display/offset.py tool to see visual representation.
+
+```bash
+ py tools/display/offset.py --filepath="ur-file-name" --split
+```
