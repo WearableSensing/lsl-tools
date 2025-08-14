@@ -1,8 +1,8 @@
 from psychopy import visual, core
 import serial
-from pylsl import StreamInfo, StreamOutlet
+from pylsl import StreamInfo, StreamOutlet, local_clock
 import argparse
-from typing import Tuple
+from typing import Tuple, Optional
 
 """PsychoPy Photodiode Experiment for Clock Synchronization."""
 
@@ -18,6 +18,7 @@ def photodiode(
     software_stream: Tuple[StreamOutlet, int] | None,
     trials: int,
     display_rate: float,
+    offset_value: Optional[float] = 0.0
 ) -> None:
     """
     The photodiode experiment using PsychoPy. It will flash a white white for
@@ -79,6 +80,7 @@ def photodiode(
             bytes(chr(hard_trig_val), "utf-8"),
             outlet,
             [soft_trig_val],
+            offset_value
         )
         win.flip()
         core.wait(display_rate)
@@ -91,6 +93,7 @@ def photodiode(
             bytes(chr(0), "utf-8"),
             outlet,
             [0],
+            offset_value
         )
         disRate.draw()
         trialHeader.draw()
@@ -136,11 +139,14 @@ def createMarkerStream(
     return outlet, trig_val
 
 
-def multiTrigHandler(mmbts_use, software_use, port, arg1, outlet, arg2):
+def multiTrigHandler(mmbts_use, software_use, port, arg1, outlet, arg2,
+                     offset_value):
     if mmbts_use:
         port.write(arg1)
     if software_use:
-        outlet.push_sample(arg2)
+        now = local_clock()
+        adjusted_timestamp = now - offset_value
+        outlet.push_sample(arg2, adjusted_timestamp)
 
 
 def timer(win: visual.Window, countdown: int):
@@ -207,9 +213,16 @@ if __name__ == "__main__":
         default=DEFAULT_TRIG,
         help="Trig value",
     )
+    parser.add_argument(
+        "--offset",
+        type=float,
+        default=0.0,
+        help="A offset value you can add",
+    )
 
     args = parser.parse_args()
 
     # Create the LSL outlet for markers
     softwareOutlet = createMarkerStream(args.newstream, args.trig)
-    photodiode(args.port, softwareOutlet, args.trialAmount, args.displayRate)
+    photodiode(args.port, softwareOutlet, args.trialAmount, args.displayRate,
+               args.offset)

@@ -8,6 +8,7 @@ DEFAULT_STREAM_NAME = "WS-default"
 DEFAULT_TRIALS = int(25)
 DEFAULT_TRIG = int(3)
 DEFAULT_DISPLAY_RATE = float(0.25)
+DEFAULT_OFFSET_VALUE = -0.1
 
 
 def main():
@@ -57,30 +58,44 @@ def run_photodiode_experiment():
         if trig_val_input == "":
             trig_val = DEFAULT_TRIG
         try:
-            trig_val = DEFAULT_TRIG  # int(trig_val_input)
+            trig_val = int(trig_val_input)
         except ValueError:
             print("Invalid input. Please enter a whole number.")
+            trig_val = DEFAULT_TRIG
         software_stream_outlet = createMarkerStream(software_stream, trig_val)
 
     trials_input = input(
         f"How many trials do you want to run?(int, default: {DEFAULT_TRIALS}):"
     )
-    if trials_input == "":
+    if not trials_input.strip():
         trials = DEFAULT_TRIALS
     try:
-        trials = DEFAULT_TRIALS  # int(trials_input)
+        trials = int(trials_input)
     except ValueError:
         print("Invalid input. Please enter a whole number.")
+        trials = DEFAULT_TRIALS
     display_rate_input = input(
         f"At what rate do you want the flashes to run? (float, \
             default: {DEFAULT_DISPLAY_RATE}): "
     )
-    if display_rate_input == "":
+    if not display_rate_input.strip():
         display_rate = DEFAULT_DISPLAY_RATE
     try:
-        display_rate = DEFAULT_DISPLAY_RATE  # int(display_rate_input)
+        display_rate = float(display_rate_input)
     except ValueError:
         print("Invalid input. Please enter a whole number.")
+        display_rate = DEFAULT_DISPLAY_RATE
+    offset_value_input = input(
+        f"At what rate do you want the flashes to run? (float, \
+            default: {DEFAULT_OFFSET_VALUE}): "
+    )
+    if not offset_value_input.strip():
+        offset_value = DEFAULT_OFFSET_VALUE
+    try:
+        offset_value = float(offset_value_input)
+    except ValueError:
+        print("Invalid input. Please enter a whole number.")
+        offset_value = DEFAULT_OFFSET_VALUE
 
     # --- Handle Recording using Subprocess ---
     if get_boolean_input("Do you want to record? (y/n): "):
@@ -142,7 +157,8 @@ def run_photodiode_experiment():
     # --- Run Experiment ---
     # This runs in the main process, concurrently with the recorder process.
     try:
-        photodiode(com_port, software_stream_outlet, trials, display_rate)
+        photodiode(com_port, software_stream_outlet, trials, display_rate,
+                   offset_value)
     except Exception as e:
         print(f"An error occurred during the photodiode experiment: {e}")
     finally:
