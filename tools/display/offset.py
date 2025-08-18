@@ -341,12 +341,14 @@ def split_channel(
         data = data.drop(columns=[channel_to_split])
 
         # 1. Generate a new filename by adding '_split' before the extension.
-        file_root, file_ext = os.path.splitext(filepath)
-        new_filepath = f"split_{file_root}{file_ext}"
+        directory = os.path.dirname(filepath)
+        filename = os.path.basename(filepath)
+        new_filepath = f"split_{filename}"
+        output_path = os.path.join(directory, new_filepath)
 
         # 2. Save the modified DataFrame to the new file path.
         print(f"Saving split channels to new file: '{new_filepath}'...")
-        data.to_csv(new_filepath, index=False)
+        data.to_csv(output_path, index=False)
 
         print("Done ✅")
 
@@ -443,9 +445,10 @@ if __name__ == "__main__":
         directory = os.path.dirname(filepath)
         filename = os.path.basename(filepath)
 
-        split_channel(filename, DEFAULT_HARDWARE_CH_NAME, args.targets, [2, 1])
+        split_channel(filepath, DEFAULT_HARDWARE_CH_NAME,
+                      args.targets, [2, 1])
         filepath = "split_" + filename
         output_path = os.path.join(directory, filepath)
 
-    data = preprocess(filepath, args.timestamp, args.source, args.targets)
+    data = preprocess(output_path, args.timestamp, args.source, args.targets)
     plot_offset(data, args.timestamp, args.source, args.targets, args.offset)

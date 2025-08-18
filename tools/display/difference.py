@@ -10,10 +10,10 @@ from scipy.signal import find_peaks
 
 def plot_statistics_summary(diffs: np.ndarray, show: bool) -> None:
     """Creates a histogram to visualize the statistical distribution of
-    timestamp differences.
+    differences.
 
     Args:
-        diffs (np.ndarray): The array of timestamp differences.
+        diffs (np.ndarray): The array of differences.
         show (bool): Whether to show statistics summary.
 
     Returns:
@@ -70,15 +70,15 @@ def load_csv(csv_filepath: str, col_name: str) -> pd.DataFrame:
 
     if col_name not in data.columns:
         raise ValueError(
-            "Error: CSV file must contain a column named 'lsl_timestamp'."
+            f"Error: CSV file must contain a column named '{col_name}'."
         )
     return data
 
 
-def lsl_timestamp_diffs(
+def difference(
     diffs: np.ndarray, start_value: int, end_value: int, show: bool
 ):
-    """Plots timestamp differences and optionally shows statistics.
+    """Plots differences of a column and optionally shows statistics.
 
     Args:
         diffs (np.ndarray): The array of timestamp differences.
@@ -95,7 +95,7 @@ def lsl_timestamp_diffs(
 
     # Generate main plot.
     plt.figure(figsize=(12, 6))
-    plt.title("LSL Timestamp Differences")
+    plt.title("Differences")
     plt.xlabel("Sample Number")
     plt.ylabel("Difference (seconds)")
     plt.plot(np.arange(1, len(diffs) + 1), diffs)
@@ -143,13 +143,18 @@ if __name__ == "__main__":
         help="Allows to show a stats table describing the "
         "mean, range, and std to observe.",
     )
-
+    parser.add_argument(
+        "--column",
+        type=str,
+        default="lsl_timestamps",
+        help="The column of data to measure the difference. "
+    )
     args = parser.parse_args()
 
     # Load and process the data
-    data = load_csv(args.filepath, "lsl_timestamp")
-    lsl_timestamps = data["lsl_timestamp"].to_numpy()
-    diffs = np.diff(lsl_timestamps)
+    data = load_csv(args.filepath, args.column)
+    column_difference = data[args.column].to_numpy()
+    diffs = np.diff(column_difference)
 
     # Plot the differences
-    lsl_timestamp_diffs(diffs, args.start, args.end, args.show)
+    difference(diffs, args.start, args.end, args.show)

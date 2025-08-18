@@ -8,7 +8,7 @@ DEFAULT_STREAM_NAME = "WS-default"
 DEFAULT_TRIALS = int(25)
 DEFAULT_TRIG = int(3)
 DEFAULT_DISPLAY_RATE = float(0.25)
-DEFAULT_OFFSET_VALUE = 0
+DEFAULT_OFFSET_VALUE = 0.0
 
 
 def main():
@@ -27,14 +27,14 @@ def main():
 
         case _:
             print(
-                f"\n Invalid choice: '{choice}'. Please run the script \
-              again and select a number between 1 and 5."
+                f"\n Invalid choice: '{choice}'. Please run the script "
+                + "again and select a number between 1 and 5."
             )
 
 
 def run_photodiode_experiment():
-    """Gathers parameters, handles recording, and runs the photodiode \
-        experiment."""
+    """Gathers parameters, handles recording, and runs the photodiode " +
+        "experiment."""
     # --- Initialization ---
     com_port = None
     hardware_stream = None
@@ -60,7 +60,7 @@ def run_photodiode_experiment():
         try:
             trig_val = int(trig_val_input)
         except ValueError:
-            print("Invalid input. Please enter a whole number.")
+            print("Invalid input. Using DEFAULT..")
             trig_val = DEFAULT_TRIG
         software_stream_outlet = createMarkerStream(software_stream, trig_val)
 
@@ -72,29 +72,29 @@ def run_photodiode_experiment():
     try:
         trials = int(trials_input)
     except ValueError:
-        print("Invalid input. Please enter a whole number.")
+        print("Invalid input. Using DEFAULT..")
         trials = DEFAULT_TRIALS
     display_rate_input = input(
-        f"At what rate do you want the flashes to run? (float, \
-            default: {DEFAULT_DISPLAY_RATE}): "
+        "At what rate do you want the flashes to run? (float," +
+        f" default: {DEFAULT_DISPLAY_RATE}): "
     )
     if not display_rate_input.strip():
         display_rate = DEFAULT_DISPLAY_RATE
     try:
         display_rate = float(display_rate_input)
     except ValueError:
-        print("Invalid input. Please enter a whole number.")
+        print("Invalid input. Using DEFAULT..")
         display_rate = DEFAULT_DISPLAY_RATE
     offset_value_input = input(
-        f"At what rate do you want to offset? (float, \
-            default: {DEFAULT_OFFSET_VALUE}): "
+        "At what rate do you want to offset? (float," +
+        f" default: {DEFAULT_OFFSET_VALUE}): "
     )
     if not offset_value_input.strip():
         offset_value = DEFAULT_OFFSET_VALUE
     try:
         offset_value = float(offset_value_input)
     except ValueError:
-        print("Invalid input. Please enter a whole number.")
+        print("Invalid input. Using DEFAULT..")
         offset_value = DEFAULT_OFFSET_VALUE
 
     # --- Handle Recording using Subprocess ---
@@ -110,8 +110,8 @@ def run_photodiode_experiment():
 
         if not streams_to_record:
             print(
-                "Warning: Recording requested, but no streams \
-                  were specified."
+                "Warning: Recording requested, but no streams " +
+                "were specified."
             )
         else:
             # This assumes your recorder script is in a 'consume' subdirectory
@@ -123,12 +123,12 @@ def run_photodiode_experiment():
 
             if not os.path.exists(recorder_script_path):
                 print(
-                    f"FATAL ERROR: Recorder script not found \
-                        at {recorder_script_path}"
+                    "FATAL ERROR: Recorder script not found " +
+                    f"at {recorder_script_path}"
                 )
                 print(
-                    "Please ensure 'unified_receive.py' is in a 'consume' \
-                        folder next to this script."
+                    "Please ensure 'unified_receive.py' is in a 'consume' " +
+                    "folder next to this script."
                 )
                 sys.exit(1)  # Exit if the recorder can't be found
 
@@ -194,8 +194,8 @@ def get_boolean_input(prompt):
             return False
         else:
             print(
-                "Invalid input. Please enter 'True', 'False', 'Yes', \
-                  or 'No'."
+                "Invalid input. Please enter 'True', 'False', 'Yes', " +
+                "or 'No'."
             )
 
 
