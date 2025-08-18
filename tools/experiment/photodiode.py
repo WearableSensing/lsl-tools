@@ -9,7 +9,7 @@ from typing import Tuple, Optional
 DEFAULT_PORT = "COM10"
 DEFAULT_TRIAL_AMOUNT = 25
 DEFAULT_DISPLAY_RATE = 0.25  # seconds
-DEFAULT_STREAM_NAME = "PsychoPyMarkers"
+DEFAULT_SOFTWARE_STREAM_NAME = "PsychoPyMarkers"
 DEFAULT_TRIG = int(3)
 
 
@@ -204,7 +204,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--newstream",
         type=str,
-        default=DEFAULT_STREAM_NAME,
+        default=DEFAULT_SOFTWARE_STREAM_NAME,
         help="The software stream name.",
     )
     parser.add_argument(
