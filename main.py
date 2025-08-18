@@ -8,7 +8,7 @@ DEFAULT_STREAM_NAME = "WS-default"
 DEFAULT_TRIALS = int(25)
 DEFAULT_TRIG = int(3)
 DEFAULT_DISPLAY_RATE = float(0.25)
-DEFAULT_OFFSET_VALUE = -0.1
+DEFAULT_OFFSET_VALUE = 0
 
 
 def main():
@@ -86,7 +86,7 @@ def run_photodiode_experiment():
         print("Invalid input. Please enter a whole number.")
         display_rate = DEFAULT_DISPLAY_RATE
     offset_value_input = input(
-        f"At what rate do you want the flashes to run? (float, \
+        f"At what rate do you want to offset? (float, \
             default: {DEFAULT_OFFSET_VALUE}): "
     )
     if not offset_value_input.strip():
