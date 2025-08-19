@@ -6,11 +6,13 @@ from typing import Tuple, Optional
 
 """PsychoPy Photodiode Experiment for Clock Synchronization."""
 
-DEFAULT_PORT = "COM10"
-DEFAULT_TRIAL_AMOUNT = 25
-DEFAULT_DISPLAY_RATE = 0.25  # seconds
-DEFAULT_SOFTWARE_STREAM_NAME = "PsychoPyMarkers"
-DEFAULT_TRIG = int(3)
+from tools.config import (
+    DEFAULT_PORT,
+    DEFAULT_TRIAL_AMOUNT,
+    DEFAULT_DISPLAY_RATE,
+    DEFAULT_SOFTWARE_STREAM_NAME,
+    DEFAULT_TRIG,
+)
 
 
 def photodiode(
@@ -18,7 +20,7 @@ def photodiode(
     software_stream: Tuple[StreamOutlet, int] | None,
     trials: int,
     display_rate: float,
-    offset_value: Optional[float] = 0.0
+    offset_value: Optional[float] = 0.0,
 ) -> None:
     """
     The photodiode experiment using PsychoPy. It will flash a white white for
@@ -80,7 +82,7 @@ def photodiode(
             bytes(chr(hard_trig_val), "utf-8"),
             outlet,
             [soft_trig_val],
-            offset_value
+            offset_value,
         )
         win.flip()
         core.wait(display_rate)
@@ -93,7 +95,7 @@ def photodiode(
             bytes(chr(0), "utf-8"),
             outlet,
             [0],
-            offset_value
+            offset_value,
         )
         disRate.draw()
         trialHeader.draw()
@@ -139,8 +141,9 @@ def createMarkerStream(
     return outlet, trig_val
 
 
-def multiTrigHandler(mmbts_use, software_use, port, arg1, outlet, arg2,
-                     offset_value):
+def multiTrigHandler(
+    mmbts_use, software_use, port, arg1, outlet, arg2, offset_value
+):
     if mmbts_use:
         port.write(arg1)
     if software_use:
@@ -185,7 +188,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--port",
-        default=None,
+        default=DEFAULT_PORT,
         type=str,
         help="The COM port (ex: 'COM10')",
     )
@@ -224,5 +227,10 @@ if __name__ == "__main__":
 
     # Create the LSL outlet for markers
     softwareOutlet = createMarkerStream(args.newstream, args.trig)
-    photodiode(args.port, softwareOutlet, args.trialAmount, args.displayRate,
-               args.offset)
+    photodiode(
+        args.port,
+        softwareOutlet,
+        args.trialAmount,
+        args.displayRate,
+        args.offset,
+    )

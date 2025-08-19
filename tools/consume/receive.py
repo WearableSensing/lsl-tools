@@ -6,9 +6,11 @@ from datetime import datetime
 import pandas as pd
 import pylsl
 
-DEFAULT_DURATION = 10
-DEFAULT_STREAM_NAME = "WS-default"
-DEFAULT_OUTPUT_PATH = "."
+from tools.config import (
+    DEFAULT_DURATION,
+    DEFAULT_STREAM_NAME,
+    DEFAULT_OUTPUT_PATH,
+)
 
 
 def find_stream(stream_name: str) -> pylsl.StreamInlet:

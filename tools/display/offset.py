@@ -5,11 +5,12 @@ import matplotlib.pyplot as plt
 from typing import Tuple, Optional
 import argparse
 
-
-DEFAULT_SOFTWARE_CH_NAME = "PsychoPyMarkers_SoftwareMarker"
-DEFAULT_HARDWARE_CH_NAME = "WS-default_TRG"
-DEFAULT_TIMESTAMP_CH_NAME = "lsl_timestamp"
-DEFAULT_TARGETS = ["mmbts", "lightdiode"]
+from tools.config import (
+    DEFAULT_SOFTWARE_CH_NAME,
+    DEFAULT_HARDWARE_CH_NAME,
+    DEFAULT_TIMESTAMP_CH_NAME,
+    DEFAULT_TARGETS,
+)
 
 
 # just plotting the values
@@ -445,8 +446,7 @@ if __name__ == "__main__":
         directory = os.path.dirname(filepath)
         filename = os.path.basename(filepath)
 
-        split_channel(filepath, DEFAULT_HARDWARE_CH_NAME,
-                      args.targets, [2, 1])
+        split_channel(filepath, DEFAULT_HARDWARE_CH_NAME, args.targets, [2, 1])
         filepath = "split_" + filename
         output_path = os.path.join(directory, filepath)
 
