@@ -43,6 +43,7 @@ jobs:
           LD_LIBRARY_PATH: /usr/share/miniconda/lib:$LD_LIBRARY_PATH
         shell: bash
         run: |
+          export PYGLET_GL_DRIVER=xlib
           xvfb-run --auto-servernum coverage run --branch -m unittest discover
           coverage report -m
           coverage xml
