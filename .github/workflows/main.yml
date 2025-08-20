@@ -23,9 +23,6 @@ jobs:
           cache: 'pip'
 
       - name: install
-        env:
-          LD_LIBRARY_PATH: /usr/share/miniconda/lib:$LD_LIBRARY_PATH
-        shell: bash
         run: |
           python -m pip install --upgrade pip
           pip install .[dev]
@@ -38,6 +35,8 @@ jobs:
         run: mypy ./
 
       - name: test
+        env:
+          LD_LIBRARY_PATH: /usr/share/miniconda/lib:$LD_LIBRARY_PATH
         shell: bash
         run: |
           coverage run --branch -m unittest discover
