@@ -42,10 +42,14 @@ class TestFindStream(unittest.TestCase):
         Test finding a stream by name when it exists.
         """
         stream_name = "TestStream"
-        result_inlet = find_stream(stream_name)  # Calls find_stream method from consume.receive module.
+        result_inlet = find_stream(
+            stream_name
+        )  # Calls find_stream method from consume.receive module.
 
         # Checks that methods were called corectly
-        self.mock_pylsl.resolve_byprop.assert_called_once_with(prop="name", value=stream_name, timeout=10)
+        self.mock_pylsl.resolve_byprop.assert_called_once_with(
+            prop="name", value=stream_name, timeout=10
+        )
         self.mock_pylsl.StreamInlet.assert_called_once_with(self.mock_stream)
 
         self.assertEqual(result_inlet, self.mock_inlet_inst)
@@ -57,7 +61,9 @@ class TestFindStream(unittest.TestCase):
         self.mock_pylsl.resolve_byprop.return_value = []
         stream_name = "NoStream"
         with self.assertRaises(Exception) as context:
-            find_stream(stream_name)  # Calls find_stream method from consume.receive module.
+            find_stream(
+                stream_name
+            )  # Calls find_stream method from consume.receive module.
 
         # Final check that function returns the correct inlet
         self.assertTrue("Could not find stream name" in str(context.exception))
@@ -66,7 +72,10 @@ class TestFindStream(unittest.TestCase):
         """
         Test finding a stream when multiple streams are found
         """
-        self.mock_pylsl.resolve_byprop.return_value = [self.mock_stream, MagicMock()]
+        self.mock_pylsl.resolve_byprop.return_value = [
+            self.mock_stream,
+            MagicMock(),
+        ]
         stream_name = "MultiStreams"
 
         # Acting and asserting
@@ -88,7 +97,9 @@ class TestReceiveData(unittest.TestCase):
         self.pd_patcher = patch("tools.consume.receive.pd.DataFrame")
         self.time_patcher = patch("tools.consume.receive.time")
         self.datetime_patcher = patch("tools.consume.receive.datetime")
-        self.open_patcher = patch("tools.consume.receive.open", new_callable=mock_open)
+        self.open_patcher = patch(
+            "tools.consume.receive.open", new_callable=mock_open
+        )
         self.mock_dataframe = self.pd_patcher.start()
         self.mock_time = self.time_patcher.start()
         self.mock_datetime = self.datetime_patcher.start()
@@ -121,16 +132,25 @@ class TestReceiveData(unittest.TestCase):
         mock_ch = MagicMock()
         mock_reference = MagicMock()
         mock_stream_info.desc.return_value = mock_desc
-        mock_desc.child.side_effect = lambda x: {"channels": mock_channels, "reference": mock_reference}[x]
+        mock_desc.child.side_effect = lambda x: {
+            "channels": mock_channels,
+            "reference": mock_reference,
+        }[x]
         mock_channels.child.return_value = mock_ch
-        mock_ch.child_value.side_effect = lambda x: {"label": "CH1", "unit": "microvolts"}[x]
+        mock_ch.child_value.side_effect = lambda x: {
+            "label": "CH1",
+            "unit": "microvolts",
+        }[x]
         mock_ch.next_sibling.return_value = mock_ch
         mock_reference.child_value.return_value = "Ref1"
 
         # Mock data pulling from the stream
         mock_samples = [[1.0, 2.0], [1.1, 2.1]]
         mock_timestamps = [12345.1, 12345.2]
-        self.mock_stream_inlet.pull_chunk.return_value = (mock_samples, mock_timestamps)
+        self.mock_stream_inlet.pull_chunk.return_value = (
+            mock_samples,
+            mock_timestamps,
+        )
 
     def tearDown(self):
         """
@@ -158,9 +178,13 @@ class TestReceiveData(unittest.TestCase):
             self.mock_df_instance.to_csv.assert_called_once()
 
             # Check that the file was opened correctly and correct filename
-            expected_filename = f"DSIdata-{test_dur}s-20250722-120000.csv"
+            expected_filename = (
+                f"DSIdata-{test_dur}s-20250722-120000-TestStream.csv"
+            )
             expected_full_path = os.path.join(output_path, expected_filename)
-            self.mock_open.assert_called_once_with(expected_full_path, "w", newline="")
+            self.mock_open.assert_called_once_with(
+                expected_full_path, "w", newline=""
+            )
             # 'w' mode for writing, newline='' to avoid extra newlines in csv
 
             # Check that the metadata was written to the file
@@ -174,8 +198,12 @@ class TestReceiveData(unittest.TestCase):
             # Check that the DataFrame was saved
             expected_col = ["Timestamp", "CH1", "CH1", "lsl_timestamp"]
             expected_data = [[1, 1.0, 2.0, 12345.1], [2, 1.1, 2.1, 12345.2]]
-            self.mock_dataframe.assert_called_once_with(expected_data, columns=expected_col)
-            self.mock_df_instance.to_csv.assert_called_once_with(handle, index=False)
+            self.mock_dataframe.assert_called_once_with(
+                expected_data, columns=expected_col
+            )
+            self.mock_df_instance.to_csv.assert_called_once_with(
+                handle, index=False
+            )
 
 
 if __name__ == "__main__":

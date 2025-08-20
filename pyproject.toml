@@ -15,6 +15,7 @@ dependencies = [
     "pylsl==1.16.2",
     "scipy==1.11.4",
     "pandas==2.3.1",
+    "psychopy==2025.1.1",
 ]
 
 license = { file = "LICENSE" }
@@ -22,9 +23,9 @@ license = { file = "LICENSE" }
 [project.optional-dependencies]
 dev = [
     "mypy==1.10.0",
-    "black==23.7.0",
     "coverage[toml]==7.3.2",
-    "psychopy==2025.1.1",
+    "flake8==7.3.0",
+    "flake8-pyproject",
 ]
 
 test = [
@@ -58,5 +59,10 @@ exclude = [
     "BciPy/.*"
 ]
 
-[tool.black]
-line-length = 120
+[tool.flake8]
+line-length = 79
+exclude = [
+    ".venv",
+    "build",
+    "tests"
+]
