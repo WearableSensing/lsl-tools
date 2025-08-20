@@ -10,6 +10,7 @@ from tools.config import (
     DEFAULT_TRIG,
     DEFAULT_DISPLAY_RATE,
     DEFAULT_OFFSET_VALUE,
+    DEFAULT_PORT
 )
 
 
@@ -35,8 +36,9 @@ def main():
 
 
 def run_photodiode_experiment():
-    """Gathers parameters, handles recording, and runs the photodiode " +
-    "experiment."""
+    """
+    Gathers parameters, handles recording, and runs the photodiode experiment.
+    """
     # --- Initialization ---
     com_port = None
     hardware_stream = None
@@ -46,30 +48,28 @@ def run_photodiode_experiment():
 
     # --- Gather Parameters ---
     if get_boolean_input("Do you want to connect a MMBTS? (y/n): "):
-        com_port = (
-            input("What is the COM port for MMBTS? (Ex: COM5): ") or "COM10"
-        )
+        com_port = (input(f"What is the COM port for MMBTS? "
+                          + "(DEFAULT: {DEFAULT_PORT}):")
+                    or DEFAULT_PORT)
         hardware_stream = DEFAULT_STREAM_NAME
 
     if get_boolean_input("Do you want to send software triggers? (y/n): "):
         software_stream = (
-            input("Create a marker stream name (e.g., PsychoPyMarkers): ")
-            or "PsychoPyMarkers"
-        )
-        trig_val_input = input("Input a unique integer trigger value: ")
+            input("Create a marker stream name (DEFAULT: PsychoPyMarkers): ")
+            or "PsychoPyMarkers")
+        trig_val_input = input("Input a unique software integer trigger " +
+                               f"(DEFAULT: {DEFAULT_TRIG}):")
         if trig_val_input == "":
             trig_val = DEFAULT_TRIG
         try:
             trig_val = int(trig_val_input)
         except ValueError:
-            print("Invalid input. Using DEFAULT..")
+            print(f"Invalid input. Using DEFAULT ({DEFAULT_TRIG})...:")
             trig_val = DEFAULT_TRIG
         software_stream_outlet = createMarkerStream(software_stream, trig_val)
 
-    trials_input = input(
-        "How many trials do you want to run?"
-        + f"(int, default: {DEFAULT_TRIAL_AMOUNT}):"
-    )
+    trials_input = input("How many trials do you want to run?"
+                         + f"(DEFAULT: {DEFAULT_TRIAL_AMOUNT}):")
     if not trials_input.strip():
         trials = DEFAULT_TRIAL_AMOUNT
     try:
@@ -78,8 +78,8 @@ def run_photodiode_experiment():
         print("Invalid input. Using DEFAULT..")
         trials = DEFAULT_TRIAL_AMOUNT
     display_rate_input = input(
-        "At what rate do you want the flashes to run? (float,"
-        + f" default: {DEFAULT_DISPLAY_RATE}): "
+        "At what rate do you want the flashes to run? ("
+        + f" DEFAULT: {DEFAULT_DISPLAY_RATE}): "
     )
     if not display_rate_input.strip():
         display_rate = DEFAULT_DISPLAY_RATE
@@ -89,8 +89,8 @@ def run_photodiode_experiment():
         print("Invalid input. Using DEFAULT..")
         display_rate = DEFAULT_DISPLAY_RATE
     offset_value_input = input(
-        "At what rate do you want to offset? (float,"
-        + f" default: {DEFAULT_OFFSET_VALUE}): "
+        "At what rate do you want to offset? ("
+        + f" DEFAULT: {DEFAULT_OFFSET_VALUE}): "
     )
     if not offset_value_input.strip():
         offset_value = DEFAULT_OFFSET_VALUE

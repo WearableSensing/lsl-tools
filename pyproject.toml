@@ -64,6 +64,5 @@ line-length = 79
 exclude = [
     ".venv",
     "build",
-    "BciPy/.*",
     "tests"
 ]

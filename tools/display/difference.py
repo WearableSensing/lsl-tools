@@ -146,7 +146,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--column",
         type=str,
-        default="lsl_timestamps",
+        default="lsl_timestamp",
         help="The column of data to measure the difference. ",
     )
     args = parser.parse_args()

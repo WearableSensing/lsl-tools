@@ -6,10 +6,10 @@ from typing import Tuple, Optional
 import argparse
 
 from tools.config import (
-    DEFAULT_SOFTWARE_CH_NAME,
-    DEFAULT_HARDWARE_CH_NAME,
+    DEFAULT_STREAM_NAME,
     DEFAULT_TIMESTAMP_CH_NAME,
     DEFAULT_TARGETS,
+    DEFAULT_SOFTWARE_STREAM_NAME
 )
 
 
@@ -311,8 +311,8 @@ def split_channel(
     # (Argument and file existence checks remain the same)
     if len(new_channels) != len(channel_values):
         print(
-            "Error: The 'new_channels' and 'channel_values' lists must have \
-                the same length."
+            "Error: The 'new_channels' and 'channel_values' lists must have"
+            " the same length."
         )
         return
     if not os.path.exists(filepath):
@@ -326,8 +326,8 @@ def split_channel(
 
         if channel_to_split not in data.columns:
             print(
-                f"Error: Column '{channel_to_split}' not found in the CSV \
-                    file."
+                f"Error: Column '{channel_to_split}' not found in the CSV "
+                    "file."
             )
             return
 
@@ -400,7 +400,7 @@ def format_display_text(label: str, offset: list[float]) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="A script that reads a CSV file, calculates the "
-        "offsets between triggers"
+                    "offsets between triggers"
     )
     parser.add_argument(
         "--filepath",
@@ -411,7 +411,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--source",
         type=str,
-        default=DEFAULT_SOFTWARE_CH_NAME,
+        default= f"{DEFAULT_SOFTWARE_STREAM_NAME}_SoftwareMarker",
         help="The source channel name",
     )
     parser.add_argument(
@@ -428,16 +428,17 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--split",
-        action="store_true",
+        action="store_false",
+        default=True,
         help="Split the hardware triggers first",
     )
     parser.add_argument(
         "--offset",
         type=float,
         default=0.0,
-        help="A offset value you can add, it will not affect the normal graph \
-            It will only show a difference on the offset difference graph and \
-                stats table.",
+        help="A offset value you can add, it will not affect the normal "
+              "graph. It will only show a difference on the offset difference" 
+              " graph and stats table.",
     )
     args = parser.parse_args()
 
@@ -446,9 +447,12 @@ if __name__ == "__main__":
         directory = os.path.dirname(filepath)
         filename = os.path.basename(filepath)
 
-        split_channel(filepath, DEFAULT_HARDWARE_CH_NAME, args.targets, [2, 1])
+        split_channel(filepath, f"{DEFAULT_STREAM_NAME}_TRG", args.targets,
+                      [2, 1])
         filepath = "split_" + filename
         output_path = os.path.join(directory, filepath)
+    else:
+        output_path = args.filepath
 
     data = preprocess(output_path, args.timestamp, args.source, args.targets)
     plot_offset(data, args.timestamp, args.source, args.targets, args.offset)

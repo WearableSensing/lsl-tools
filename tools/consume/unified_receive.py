@@ -52,8 +52,7 @@ def find_stream(stream_names: list[str]) -> Tuple[list[StreamInlet], dict]:
 
     if not inlets:
         raise RuntimeError(
-            "Error: No specified LSL streams were found. \
-                           Cannot continue."
+            "Error: No specified LSL streams were found. Cannot continue."
         )
     return inlets, stream_channel_labels
 
