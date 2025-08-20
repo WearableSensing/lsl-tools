@@ -39,6 +39,8 @@ jobs:
           LD_LIBRARY_PATH: /usr/share/miniconda/lib:$LD_LIBRARY_PATH
         shell: bash
         run: |
+          conda install -c conda-forge liblsl
+          export PSYCHOPY_WINIT_BACKEND=None
           coverage run --branch -m unittest discover
           coverage report -m
           coverage xml
