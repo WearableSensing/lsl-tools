@@ -10,7 +10,7 @@ This is the preferred method for data recording, as it does not require a strict
 Before you can run the script, you must install the necessary files and dependencies on your system.
 - [Python](https://www.python.org/downloads/): Any modern version of Python (3.8+).
 - [dsi2lsl program](https://github.com/labstreaminglayer/App-WearableSensing/releases)
-- The ```pylsl``` and ```pandas``` Python libraries. This guide will walk you through installing these using the ```requirements.txt``` file. 
+- The ```pylsl``` and ```pandas``` Python libraries. This guide will walk you through installing these using the ```requirements.txt``` file.
   
 ## Setup Instructions
 
@@ -80,12 +80,12 @@ pip install -e .[dev]
 
 The project uses a GitHub Actions workflow to automatically check all pushes and pull requests. To avoid breaking the build, please run these same checks locally on your machine before pushing your changes.
 
-#### A. Format Code (Black)
+#### A. Format Code (flake8)
 
 Run this command to automatically have black format your code before committing:
 
 ```Bash
-black .
+flake8 .
 ```
 
 #### B. Type Checking (MyPy)
