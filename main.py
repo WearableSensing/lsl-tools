@@ -48,8 +48,8 @@ def run_photodiode_experiment():
 
     # --- Gather Parameters ---
     if get_boolean_input("Do you want to connect a MMBTS? (y/n): "):
-        com_port = (input(f"What is the COM port for MMBTS? "
-                          + "(DEFAULT: {DEFAULT_PORT}):")
+        com_port = (input("What is the COM port for MMBTS? "
+                          + f"(DEFAULT: {DEFAULT_PORT}):")
                     or DEFAULT_PORT)
         hardware_stream = DEFAULT_STREAM_NAME
 

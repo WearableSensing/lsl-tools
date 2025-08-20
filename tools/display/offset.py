@@ -327,7 +327,7 @@ def split_channel(
         if channel_to_split not in data.columns:
             print(
                 f"Error: Column '{channel_to_split}' not found in the CSV "
-                    "file."
+                "file."
             )
             return
 
@@ -411,7 +411,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--source",
         type=str,
-        default= f"{DEFAULT_SOFTWARE_STREAM_NAME}_SoftwareMarker",
+        default=f"{DEFAULT_SOFTWARE_STREAM_NAME}_SoftwareMarker",
         help="The source channel name",
     )
     parser.add_argument(
@@ -437,8 +437,8 @@ if __name__ == "__main__":
         type=float,
         default=0.0,
         help="A offset value you can add, it will not affect the normal "
-              "graph. It will only show a difference on the offset difference" 
-              " graph and stats table.",
+        "graph. It will only show a difference on the offset difference"
+        " graph and stats table.",
     )
     args = parser.parse_args()
 
