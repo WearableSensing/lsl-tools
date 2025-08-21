@@ -66,6 +66,3 @@ exclude = [
     "build",
     "tests"
 ]
-
-[tool.black]
-line-length = 79
