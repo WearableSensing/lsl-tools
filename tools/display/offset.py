@@ -9,7 +9,7 @@ from tools.config import (
     DEFAULT_STREAM_NAME,
     DEFAULT_TIMESTAMP_CH_NAME,
     DEFAULT_TARGETS,
-    DEFAULT_SOFTWARE_STREAM_NAME
+    DEFAULT_SOFTWARE_STREAM_NAME,
 )
 
 
@@ -400,7 +400,7 @@ def format_display_text(label: str, offset: list[float]) -> str:
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="A script that reads a CSV file, calculates the "
-                    "offsets between triggers"
+        "offsets between triggers"
     )
     parser.add_argument(
         "--filepath",
@@ -447,8 +447,9 @@ if __name__ == "__main__":
         directory = os.path.dirname(filepath)
         filename = os.path.basename(filepath)
 
-        split_channel(filepath, f"{DEFAULT_STREAM_NAME}_TRG", args.targets,
-                      [2, 1])
+        split_channel(
+            filepath, f"{DEFAULT_STREAM_NAME}_TRG", args.targets, [2, 1]
+        )
         filepath = "split_" + filename
         output_path = os.path.join(directory, filepath)
     else:

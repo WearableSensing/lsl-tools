@@ -10,7 +10,7 @@ from tools.config import (
     DEFAULT_TRIG,
     DEFAULT_DISPLAY_RATE,
     DEFAULT_OFFSET_VALUE,
-    DEFAULT_PORT
+    DEFAULT_PORT,
 )
 
 
@@ -48,17 +48,24 @@ def run_photodiode_experiment():
 
     # --- Gather Parameters ---
     if get_boolean_input("Do you want to connect a MMBTS? (y/n): "):
-        com_port = (input("What is the COM port for MMBTS? "
-                          + f"(DEFAULT: {DEFAULT_PORT}):")
-                    or DEFAULT_PORT)
+        com_port = (
+            input(
+                "What is the COM port for MMBTS? "
+                + f"(DEFAULT: {DEFAULT_PORT}):"
+            )
+            or DEFAULT_PORT
+        )
         hardware_stream = DEFAULT_STREAM_NAME
 
     if get_boolean_input("Do you want to send software triggers? (y/n): "):
         software_stream = (
             input("Create a marker stream name (DEFAULT: PsychoPyMarkers): ")
-            or "PsychoPyMarkers")
-        trig_val_input = input("Input a unique software integer trigger " +
-                               f"(DEFAULT: {DEFAULT_TRIG}):")
+            or "PsychoPyMarkers"
+        )
+        trig_val_input = input(
+            "Input a unique software integer trigger "
+            + f"(DEFAULT: {DEFAULT_TRIG}):"
+        )
         if trig_val_input == "":
             trig_val = DEFAULT_TRIG
         try:
@@ -68,8 +75,10 @@ def run_photodiode_experiment():
             trig_val = DEFAULT_TRIG
         software_stream_outlet = createMarkerStream(software_stream, trig_val)
 
-    trials_input = input("How many trials do you want to run?"
-                         + f"(DEFAULT: {DEFAULT_TRIAL_AMOUNT}):")
+    trials_input = input(
+        "How many trials do you want to run?"
+        + f"(DEFAULT: {DEFAULT_TRIAL_AMOUNT}):"
+    )
     if not trials_input.strip():
         trials = DEFAULT_TRIAL_AMOUNT
     try:
