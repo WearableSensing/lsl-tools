@@ -135,7 +135,7 @@ class TestUnifiedReceiveData(unittest.TestCase):
             1,
             2,
             6,
-        ]  # Start, loop, loop, end
+        ]
 
         mock_inlet1_info = MagicMock()
         mock_inlet1_info.name.return_value = "DSI-Stream"

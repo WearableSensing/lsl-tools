@@ -13,7 +13,7 @@ sys.modules["serial"] = mock_serial
 mock_pylsl = MagicMock()
 sys.modules["pylsl"] = mock_pylsl
 
-import tools.experiment.photodiode as pd
+import tools.experiment.photodiode as photodiode_exp
 
 
 class TestPhotodiodeSuite(unittest.TestCase):
@@ -36,7 +36,7 @@ class TestPhotodiodeSuite(unittest.TestCase):
         trig_val = 5
         mock_outlet = MagicMock()
         mock_pylsl.StreamOutlet.return_value = mock_outlet
-        outlet, returned_trig_val = pd.createMarkerStream(
+        outlet, returned_trig_val = photodiode_exp.createMarkerStream(
             stream_name, trig_val
         )
 
@@ -63,7 +63,7 @@ class TestPhotodiodeSuite(unittest.TestCase):
         outlet_arg = [2]
         mock_pylsl.local_clock.return_value = 1000.0
         offset = 5.0
-        pd.multiTrigHandler(
+        photodiode_exp.multiTrigHandler(
             mmbts_use=True,
             software_use=True,
             port=mock_port,
@@ -84,7 +84,7 @@ class TestPhotodiodeSuite(unittest.TestCase):
         """
         mock_port = MagicMock()
         mock_outlet = MagicMock()
-        pd.multiTrigHandler(
+        photodiode_exp.multiTrigHandler(
             mmbts_use=False,
             software_use=False,
             port=mock_port,
@@ -103,7 +103,7 @@ class TestPhotodiodeSuite(unittest.TestCase):
         """
         mock_win = MagicMock()
         countdown = 3
-        pd.timer(mock_win, countdown)
+        photodiode_exp.timer(mock_win, countdown)
 
         self.assertEqual(
             mock_psychopy.visual.TextStim().draw.call_count, countdown
@@ -119,7 +119,7 @@ class TestPhotodiodeSuite(unittest.TestCase):
         mock_win.size = [1920, 1080]
         box_size = 200
 
-        pd.lightbox(mock_win, box_size, "top_right")
+        photodiode_exp.lightbox(mock_win, box_size, "top_right")
 
         expected_pos_x = (1920 / 2) - (box_size / 2)
         expected_pos_y = (1080 / 2) - (box_size / 2)
@@ -138,7 +138,7 @@ class TestPhotodiodeSuite(unittest.TestCase):
         mock_win.size = [1920, 1080]
         box_size = 200
 
-        pd.lightbox(mock_win, box_size, "top_left")
+        photodiode_exp.lightbox(mock_win, box_size, "top_left")
 
         expected_pos_x = -((1920 / 2) - (box_size / 2))
         expected_pos_y = (1080 / 2) - (box_size / 2)
@@ -169,7 +169,7 @@ class TestPhotodiodeSuite(unittest.TestCase):
 
         mock_psychopy.visual.Window.return_value = mock_win_instance
 
-        pd.photodiode(
+        photodiode_exp.photodiode(
             port_str, software_stream, num_trials, display_rate, offset
         )
 
