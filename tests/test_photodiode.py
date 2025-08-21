@@ -3,15 +3,15 @@ from unittest.mock import MagicMock, call
 import sys
 
 mock_psychopy = MagicMock()
-sys.modules['psychopy'] = mock_psychopy
-sys.modules['psychopy.visual'] = mock_psychopy.visual
-sys.modules['psychopy.core'] = mock_psychopy.core
+sys.modules["psychopy"] = mock_psychopy
+sys.modules["psychopy.visual"] = mock_psychopy.visual
+sys.modules["psychopy.core"] = mock_psychopy.core
 
 mock_serial = MagicMock()
-sys.modules['serial'] = mock_serial
+sys.modules["serial"] = mock_serial
 
 mock_pylsl = MagicMock()
-sys.modules['pylsl'] = mock_pylsl
+sys.modules["pylsl"] = mock_pylsl
 
 import tools.experiment.photodiode as pd
 
@@ -36,7 +36,9 @@ class TestPhotodiodeSuite(unittest.TestCase):
         trig_val = 5
         mock_outlet = MagicMock()
         mock_pylsl.StreamOutlet.return_value = mock_outlet
-        outlet, returned_trig_val = pd.createMarkerStream(stream_name, trig_val)
+        outlet, returned_trig_val = pd.createMarkerStream(
+            stream_name, trig_val
+        )
 
         mock_pylsl.StreamInfo.assert_called_once_with(
             name=stream_name,
@@ -52,7 +54,8 @@ class TestPhotodiodeSuite(unittest.TestCase):
 
     def test_multiTrigHandler_all_triggers(self):
         """
-        Tests the trigger handler when both hardware and software triggers are active.
+        Tests the trigger handler when both hardware and software triggers are
+        active.
         """
         mock_port = MagicMock()
         mock_outlet = MagicMock()
@@ -70,11 +73,14 @@ class TestPhotodiodeSuite(unittest.TestCase):
             offset_value=offset,
         )
         mock_port.write.assert_called_once_with(port_arg)
-        mock_outlet.push_sample.assert_called_once_with(outlet_arg, 1000.0 - offset)
+        mock_outlet.push_sample.assert_called_once_with(
+            outlet_arg, 1000.0 - offset
+        )
 
     def test_multiTrigHandler_no_triggers(self):
         """
-        Tests the trigger handler when both hardware and software triggers are disabled.
+        Tests the trigger handler when both hardware and software triggers are
+        disabled.
         """
         mock_port = MagicMock()
         mock_outlet = MagicMock()
@@ -99,7 +105,9 @@ class TestPhotodiodeSuite(unittest.TestCase):
         countdown = 3
         pd.timer(mock_win, countdown)
 
-        self.assertEqual(mock_psychopy.visual.TextStim().draw.call_count, countdown)
+        self.assertEqual(
+            mock_psychopy.visual.TextStim().draw.call_count, countdown
+        )
         self.assertEqual(mock_win.flip.call_count, countdown)
         mock_psychopy.core.wait.assert_has_calls([call(1.0)] * countdown)
 
@@ -119,7 +127,7 @@ class TestPhotodiodeSuite(unittest.TestCase):
             mock_win,
             size=(box_size, box_size),
             fillColor="white",
-            pos=(expected_pos_x, expected_pos_y)
+            pos=(expected_pos_x, expected_pos_y),
         )
 
     def test_lightbox_top_left(self):
@@ -134,12 +142,12 @@ class TestPhotodiodeSuite(unittest.TestCase):
 
         expected_pos_x = -((1920 / 2) - (box_size / 2))
         expected_pos_y = (1080 / 2) - (box_size / 2)
-        
+
         mock_psychopy.visual.Rect.assert_called_once_with(
             mock_win,
             size=(box_size, box_size),
             fillColor="white",
-            pos=(expected_pos_x, expected_pos_y)
+            pos=(expected_pos_x, expected_pos_y),
         )
 
     def test_photodiode_main_function(self):
@@ -161,13 +169,17 @@ class TestPhotodiodeSuite(unittest.TestCase):
 
         mock_psychopy.visual.Window.return_value = mock_win_instance
 
-        pd.photodiode(port_str, software_stream, num_trials, display_rate, offset)
+        pd.photodiode(
+            port_str, software_stream, num_trials, display_rate, offset
+        )
 
         mock_serial.Serial.assert_called_once_with(port_str)
         mock_psychopy.visual.Window.assert_called_once()
 
         expected_flip_count = (num_trials * 2) + 3
-        self.assertEqual(mock_win_instance.flip.call_count, expected_flip_count)
+        self.assertEqual(
+            mock_win_instance.flip.call_count, expected_flip_count
+        )
 
         mock_port_instance.write.assert_called_with(bytes(chr(0), "utf-8"))
         mock_port_instance.close.assert_called_once()
@@ -175,5 +187,5 @@ class TestPhotodiodeSuite(unittest.TestCase):
         mock_psychopy.core.quit.assert_called_once()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main(verbosity=2)

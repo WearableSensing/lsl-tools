@@ -67,3 +67,5 @@ exclude = [
     "tests"
 ]
 
+[tool.black]
+line-length = 79
