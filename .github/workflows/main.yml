@@ -43,7 +43,7 @@ jobs:
       - name: test
         shell: bash -l {0}
         run: |
-          export PYGLET_GL_DRIVER=xlib
+          export PYGLET_PLATFORM=headless
           xvfb-run --auto-servernum coverage run --branch -m unittest discover
           coverage report -m
           coverage xml
