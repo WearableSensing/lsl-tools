@@ -52,27 +52,27 @@ def photodiode(
 
     # Set up the PsychoPy Window and Stimuli
     win = visual.Window(
-        monitor="testMonitor", units="pix", color="black", fullscr=True
+        monitor="testMonitor", units="pix", color="gray", fullscr=True
     )
     # Create light box
-    lightTrig = lightbox(win, 200, "top_right")
+    light_trig = lightbox(win, 200, "top_right")
     # Startup countdown
     timer(win, 3)
 
     # Experiment paramters
-    disRate = visual.TextStim(
+    dis_rate = visual.TextStim(
         win, text="Display Rate:" + str(display_rate), pos=(0, -25)
     )
-    curTrial = visual.TextStim(win)
-    trialHeader = visual.TextStim(win, text="Trial #:", pos=(-25, 0))
+    cur_trial = visual.TextStim(win)
+    trial_header = visual.TextStim(win, text="Trial #:", pos=(-25, 0))
 
     for trial in range(trials):
-        curTrial.text = str(trial + 1)
-        curTrial.pos = (25, 0)
-        curTrial.draw()
-        disRate.draw()
-        trialHeader.draw()
-        lightTrig.draw()
+        cur_trial.text = str(trial + 1)
+        cur_trial.pos = (25, 0)
+        cur_trial.draw()
+        dis_rate.draw()
+        trial_header.draw()
+        light_trig.draw()
         # Show the stimulus and send the marker almost simultaneously
         win.callOnFlip(
             multiTrigHandler,
@@ -97,8 +97,8 @@ def photodiode(
             [0],
             offset_value,
         )
-        disRate.draw()
-        trialHeader.draw()
+        dis_rate.draw()
+        trial_header.draw()
         win.flip()
         core.wait(display_rate)
 
@@ -125,6 +125,7 @@ def createMarkerStream(
         type="Markers",
         channel_count=1,  # Number of channels (1 for a single marker stream)
         nominal_srate=0,  # The rate is irregular, so we set it to 0
+        channel_format="int32",  # Data type of the markers
         source_id="my_unique_id_12345",  # A unique identifier
     )
     description = marker_stream_info.desc()
@@ -152,10 +153,9 @@ def multiTrigHandler(
 
 
 def timer(win: visual.Window, countdown: int):
-    cd_str = str(countdown)
-    cd = visual.TextStim(win)
+    cd = visual.TextStim(win, text=countdown)
     while countdown != 0:
-        cd.text = cd_str
+        cd.text = countdown
         cd.draw()
         win.flip()
         countdown -= 1
@@ -166,7 +166,6 @@ def lightbox(win: visual.Window, size: int, pos: str):
     win_width, win_height = win.size
     # Rectangle to represent the trigger light
     rect_size = (size, size)
-    box_pos = (0, 0)
     if pos == "top_right":
         top_right_x = (win_width / 2) - (rect_size[0] / 2)
         top_right_y = (win_height / 2) - (rect_size[1] / 2)
@@ -175,11 +174,11 @@ def lightbox(win: visual.Window, size: int, pos: str):
         top_left_x = -(win_width / 2) + (rect_size[0] / 2)
         top_left_y = (win_height / 2) - (rect_size[1] / 2)
         box_pos = (top_left_x, top_left_y)
-    lightTrig = visual.Rect(
+    light_trig = visual.Rect(
         win, size=rect_size, fillColor="white", pos=box_pos
     )
 
-    return lightTrig
+    return light_trig
 
 
 if __name__ == "__main__":
@@ -227,10 +226,10 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Create the LSL outlet for markers
-    softwareOutlet = createMarkerStream(args.newstream, args.trig)
+    software_outlet = createMarkerStream(args.newstream, args.trig)
     photodiode(
         args.port,
-        softwareOutlet,
+        software_outlet,
         args.trialAmount,
         args.displayRate,
         args.offset,
