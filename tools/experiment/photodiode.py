@@ -52,7 +52,7 @@ def photodiode(
 
     # Set up the PsychoPy Window and Stimuli
     win = visual.Window(
-        monitor="testMonitor", units="pix", color="gray", fullscr=True
+        monitor="testMonitor", units="pix", color="black", fullscr=True
     )
     # Create light box
     lightTrig = lightbox(win, 200, "top_right")
@@ -125,7 +125,6 @@ def createMarkerStream(
         type="Markers",
         channel_count=1,  # Number of channels (1 for a single marker stream)
         nominal_srate=0,  # The rate is irregular, so we set it to 0
-        channel_format="int32",  # Data type of the markers
         source_id="my_unique_id_12345",  # A unique identifier
     )
     description = marker_stream_info.desc()
@@ -153,9 +152,10 @@ def multiTrigHandler(
 
 
 def timer(win: visual.Window, countdown: int):
-    cd = visual.TextStim(win, text=countdown)
+    cd_str = str(countdown)
+    cd = visual.TextStim(win)
     while countdown != 0:
-        cd.text = countdown
+        cd.text = cd_str
         cd.draw()
         win.flip()
         countdown -= 1
@@ -166,6 +166,7 @@ def lightbox(win: visual.Window, size: int, pos: str):
     win_width, win_height = win.size
     # Rectangle to represent the trigger light
     rect_size = (size, size)
+    box_pos = (0, 0)
     if pos == "top_right":
         top_right_x = (win_width / 2) - (rect_size[0] / 2)
         top_right_y = (win_height / 2) - (rect_size[1] / 2)

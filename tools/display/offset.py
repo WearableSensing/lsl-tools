@@ -442,13 +442,15 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     filepath = args.filepath
+    directory = os.path.dirname(filepath)
+    filename = os.path.basename(filepath)
     if args.split:
-        directory = os.path.dirname(filepath)
-        filename = os.path.basename(filepath)
-
         split_channel(filepath, DEFAULT_HARDWARE_CH_NAME, args.targets, [2, 1])
         filepath = "split_" + filename
-        output_path = os.path.join(directory, filepath)
+    else:
+        filepath = filename
+    
+    output_path = os.path.join(directory, filepath)
 
     data = preprocess(output_path, args.timestamp, args.source, args.targets)
     plot_offset(data, args.timestamp, args.source, args.targets, args.offset)
