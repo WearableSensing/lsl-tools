@@ -111,7 +111,7 @@ def run_photodiode_experiment():
 
     # --- Handle Recording using Subprocess ---
     if get_boolean_input("Do you want to record? (y/n): "):
-        duration = 5 + (trials * display_rate * 2)  # Add extra buffer time
+        duration = 10 + (trials * display_rate * 2)  # Add extra buffer time
         print(trials)
         print(display_rate)
         streams_to_record = []
@@ -164,17 +164,16 @@ def run_photodiode_experiment():
             recorder_process = subprocess.Popen(
                 command, stdout=subprocess.PIPE, stderr=subprocess.PIPE
             )
-            time.sleep(2)  # Give the recorder a moment to start up
-
     # --- Run Experiment ---
     # This runs in the main process, concurrently with the recorder process.
     try:
         photodiode(
-            com_port,
-            software_stream_outlet,
-            trials,
-            display_rate,
-            offset_value,
+            portStr=com_port,
+            software_stream=software_stream_outlet,
+            trials=trials,
+            display_rate=display_rate,
+            image=True,
+            offset_value=offset_value,
         )
     except Exception as e:
         print(f"An error occurred during the photodiode experiment: {e}")

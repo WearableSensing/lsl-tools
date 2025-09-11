@@ -20,7 +20,8 @@ def photodiode(
     software_stream: Tuple[StreamOutlet, int] | None,
     trials: int,
     display_rate: float,
-    offset_value: Optional[float] = 0.0,
+    image: bool = False,
+    offset_value: float = 0.0,
 ) -> None:
     """
     The photodiode experiment using PsychoPy. It will flash a white white for
@@ -29,9 +30,10 @@ def photodiode(
 
     Args:
         portStr (str): The port MMBTS is connected to in str form (Ex: COM10)
+        software_stream(tuple): LSL Stream Outlet
         trials (int): The numbers of trials the experiment will run.
         display_rate (float): The rate at the trial will be running at.
-        outlet (StreamOutlet): The LSL outlet which the trigger will be sent to
+        
 
     Returns: None
     """
@@ -52,19 +54,22 @@ def photodiode(
 
     # Set up the PsychoPy Window and Stimuli
     win = visual.Window(
-        monitor="testMonitor", units="pix", color="gray", fullscr=True
+        monitor="testMonitor", units="pix", color="black", fullscr=True
     )
     # Create light box
-    light_trig = lightbox(win, 200, "top_right")
-    # Startup countdown
-    timer(win, 3)
+    light_trig = lightbox(win, 200, "top_right", image)
 
     # Experiment paramters
     dis_rate = visual.TextStim(
-        win, text="Display Rate:" + str(display_rate), pos=(0, -25)
+        win, text="Display Rate: " + str(display_rate), pos=(0, -25)
     )
     cur_trial = visual.TextStim(win)
     trial_header = visual.TextStim(win, text="Trial #:", pos=(-25, 0))
+
+    starting = visual.TextStim(win, "starting task..")
+    starting.draw()
+    win.flip()
+    core.wait(5)
 
     for trial in range(trials):
         cur_trial.text = str(trial + 1)
@@ -99,6 +104,7 @@ def photodiode(
         )
         dis_rate.draw()
         trial_header.draw()
+        cur_trial.draw()
         win.flip()
         core.wait(display_rate)
 
@@ -157,12 +163,11 @@ def timer(win: visual.Window, countdown: int):
     while countdown != 0:
         cd.text = countdown
         cd.draw()
-        win.flip()
         countdown -= 1
-        core.wait(1.0)
 
 
-def lightbox(win: visual.Window, size: int, pos: str):
+
+def lightbox(win: visual.Window, size: int, pos: str, image: bool):
     win_width, win_height = win.size
     # Rectangle to represent the trigger light
     rect_size = (size, size)
@@ -174,9 +179,17 @@ def lightbox(win: visual.Window, size: int, pos: str):
         top_left_x = -(win_width / 2) + (rect_size[0] / 2)
         top_left_y = (win_height / 2) - (rect_size[1] / 2)
         box_pos = (top_left_x, top_left_y)
-    light_trig = visual.Rect(
-        win, size=rect_size, fillColor="white", pos=box_pos
-    )
+    if not image:
+        light_trig = visual.Rect(
+            win, size=rect_size, fillColor="white", pos=box_pos
+        )
+    else:
+        light_trig = visual.ImageStim(
+            win,
+            image="tools/static/images/white.png",
+            size=rect_size,
+            pos=box_pos,
+        )
 
     return light_trig
 
@@ -222,6 +235,11 @@ if __name__ == "__main__":
         default=0.0,
         help="A offset value you can add",
     )
+    parser.add_argument(
+        "--image",
+        action="store_true",
+        help="Whether to use an image for the lightbox",
+    )
 
     args = parser.parse_args()
 
@@ -233,4 +251,5 @@ if __name__ == "__main__":
         args.trialAmount,
         args.displayRate,
         args.offset,
+        args.image
     )

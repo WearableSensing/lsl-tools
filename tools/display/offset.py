@@ -396,6 +396,18 @@ def format_display_text(label: str, offset: list[float]) -> str:
     )
     return stats_text
 
+def split_and_save_data(filepath: str, targets: list[str], channel_split=None) -> str:
+    directory = os.path.dirname(filepath)
+    filename = os.path.basename(filepath)
+
+    split_channel(
+        filepath, f"{DEFAULT_STREAM_NAME}_TRG", targets, [2, 1], channel_split=channel_split
+    )
+    filepath = "split_" + filename
+    output_path = os.path.join(directory, filepath)
+
+    return output_path
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
